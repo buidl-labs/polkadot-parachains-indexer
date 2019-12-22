@@ -3,11 +3,13 @@ const mongoose = require("mongoose");
 const socket_io = require("socket.io");
 const Validator = require("./models/Validator.js");
 const filteredValidatorData = require("./utils/filteredValidatorData");
+const getElectedInfo = require("./utils/getElectedInfo");
 const EventEmitter = require("events");
 const { ApiPromise, WsProvider } = require("@polkadot/api");
 const eraChange = new EventEmitter();
 const config = require("config");
 const configDB = config.get("DB");
+const EI = require("./models/ElectedInfo");
 
 if (!config.has('DB')) {
     throw new Error('Database url is required!');
@@ -29,9 +31,12 @@ mongoose.connect(configDB, {useNewUrlParser: true,  useUnifiedTopology: true})
  */
 eraChange.on("newEra", async () => {
     try{
+        let result = {};
         await Validator.deleteMany({});
-        const validators = await filteredValidatorData();
-        const result = await Validator.insertMany(validators)
+        await EI.deleteMany({});
+        let validators = await filteredValidatorData();
+        result.filteredValidatorsList = await Validator.insertMany(validators)
+        result.electedInfo = await getElectedInfo();
         io.emit('onDataChange', result);
     }catch(err){
         console.log(err);
@@ -60,10 +65,13 @@ setInterval(async () => {
 
 io.on('connection', async () => {
     try{
-        let result = await Validator.find();
-        if(!(result.length > 0)){
-            const validators = await filteredValidatorData();
-            result = await Validator.insertMany(validators)
+        let result = {};
+        result.filteredValidatorsList = await Validator.find();
+        result.electedInfo = await EI.find();
+        if(!(result.filteredValidatorsList.length > 0)){
+            let validators = await filteredValidatorData();
+            result.filteredValidatorsList = await Validator.insertMany(validators)
+            result.electedInfo = await getElectedInfo();
         }
         io.emit("initial", result);
     }catch(err){
