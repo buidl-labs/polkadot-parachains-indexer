@@ -1,3 +1,5 @@
+const { ApiPromise, WsProvider } = require("@polkadot/api");
+
 async function getElectedInfo(){
     const wsProvider = new WsProvider("wss://kusama-rpc.polkadot.io");
     const api = await ApiPromise.create({ provider: wsProvider });
