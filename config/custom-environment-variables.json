@@ -1,3 +1,4 @@
 {
-    "DB": "DB"
+    "DB": "DB",
+    "SENTRY_DNS": "SENTRY_DNS"
 }

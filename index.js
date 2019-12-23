@@ -9,11 +9,20 @@ const { ApiPromise, WsProvider } = require("@polkadot/api");
 const eraChange = new EventEmitter();
 const config = require("config");
 const configDB = config.get("DB");
+const configSentryDns = config.get("SENTRY_DNS");
 const EI = require("./models/ElectedInfo");
+const Sentry = require('@sentry/node');
 
-if (!config.has('DB')) {
+if (!config.get('DB')) {
     throw new Error('Database url is required!');
 }
+
+if (!config.get('SENTRY_DNS')) {
+    throw new Error('Sentry dns is required!');
+}
+
+//Error Logger
+Sentry.init({ dsn: configSentryDns });
 
 //Initialize required middleware before starting the server
 require("./startup/startup")(app);
