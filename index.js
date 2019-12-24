@@ -12,6 +12,7 @@ const configDB = config.get("DB");
 const configSentryDns = config.get("SENTRY_DNS");
 const EI = require("./models/ElectedInfo");
 const Sentry = require('@sentry/node');
+const https = require("https");
 
 if (!config.get('DB')) {
     throw new Error('Database url is required!');
@@ -87,6 +88,15 @@ io.on('connection', async () => {
         console.log(err);
     }
 });
+
+app.get("/", (req, res) => {
+    res.send("Api for polka analytics");
+})
+
+//To keep heroku dyno awake
+setInterval(function () {
+    https.get("https://evening-sea-52088.herokuapp.com/");
+}, 300000 * 5); // every 5 minutes (300000)
 
 const PORT = process.env.PORT || 3004;
 const server = app.listen(PORT, () => console.log(`Connected on port: ${PORT}`));
