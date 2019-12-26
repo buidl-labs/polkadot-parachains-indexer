@@ -4,6 +4,7 @@ const socket_io = require("socket.io");
 const Validator = require("./models/Validator.js");
 const filteredValidatorData = require("./utils/filteredValidatorData");
 const getElectedInfo = require("./utils/getElectedInfo");
+const getValidatorsAndIntentions = require("./utils/validatorsAndIntentions");
 const EventEmitter = require("events");
 const { ApiPromise, WsProvider } = require("@polkadot/api");
 const eraChange = new EventEmitter();
@@ -11,6 +12,7 @@ const config = require("config");
 const configDB = config.get("DB");
 const configSentryDns = config.get("SENTRY_DNS");
 const EI = require("./models/ElectedInfo");
+const Intention = require("./models/Intention");
 const Sentry = require('@sentry/node');
 const https = require("https");
 
@@ -44,9 +46,11 @@ eraChange.on("newEra", async () => {
         let result = {};
         await Validator.deleteMany({});
         await EI.deleteMany({});
+        await Intention.deleteMany({});
         let validators = await filteredValidatorData();
         result.filteredValidatorsList = await Validator.insertMany(validators)
         result.electedInfo = await getElectedInfo();
+        result.intentionsData = await getValidatorsAndIntentions();
         io.emit('onDataChange', result);
     }catch(err){
         console.log(err);
@@ -78,10 +82,12 @@ io.on('connection', async () => {
         let result = {};
         result.filteredValidatorsList = await Validator.find();
         result.electedInfo = await EI.find();
+        result.intentionsData = await Intention.find();
         if(!(result.filteredValidatorsList.length > 0)){
             let validators = await filteredValidatorData();
             result.filteredValidatorsList = await Validator.insertMany(validators)
             result.electedInfo = await getElectedInfo();
+            result.intentionsData = await getValidatorsAndIntentions();
         }
         io.emit("initial", result);
     }catch(err){
@@ -91,6 +97,37 @@ io.on('connection', async () => {
 
 app.get("/", (req, res) => {
     res.send("Api for polka analytics");
+})
+
+
+app.get("/test", async (req, res) => {
+    try{
+        const wsProvider = new WsProvider("wss://kusama-rpc.polkadot.io");
+        const api = await ApiPromise.create({ provider: wsProvider });
+        await api.isReady;
+        // Retrieve all validators
+        const allValidators = await api.query.staking.validators();
+        
+        // Parse validators
+        const parsedValidators = JSON.parse(JSON.stringify(allValidators))[0];
+        // Retrieve session validators
+        
+        const sessionValidators = await api.query.session.validators();
+        
+        const intentions = await parsedValidators.filter(
+            validator => !sessionValidators.includes(validator)
+        );
+        const validatorsAndIntentions = [...sessionValidators, ...intentions];
+
+        const result = await new Intention({
+            intentions: intentions,
+            validatorsAndIntentions: validatorsAndIntentions
+        })
+        const savedResult = await result.save();
+        res.send(savedResult);
+    }catch(err){
+        console.log(err);
+    }
 })
 
 //To keep heroku dyno awake
