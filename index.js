@@ -66,7 +66,8 @@ setInterval(async () => {
 	api.query.staking.currentEra(current => {
 		const change = current.sub(previousEraIndex);
 		if (!change.isZero()) {
-			// console.log("era change");
+            // console.log("era change");
+            Sentry.captureMessage(`Era changed at: ${new Date()}`);
 			previousEraIndex = current;
 			eraChange.emit("newEra");
 		} else{
@@ -74,7 +75,7 @@ setInterval(async () => {
         }
             
     });
-}, 60000)
+}, 60000 * 4) //check for era change every 4 minutes
 
 
 io.on('connection', async () => {
@@ -83,7 +84,9 @@ io.on('connection', async () => {
         result.filteredValidatorsList = await Validator.find();
         result.electedInfo = await EI.find();
         result.intentionsData = await Intention.find();
-        if(!(result.filteredValidatorsList.length > 0)){
+        if(!(result.filteredValidatorsList.length > 0 
+            && result.electedInfo.length > 0 
+            && result.intentionsData.length > 0)){ //only fetch data if filteredValidatorsList, electedInfo and intentionsData is empty
             let validators = await filteredValidatorData();
             result.filteredValidatorsList = await Validator.insertMany(validators)
             result.electedInfo = await getElectedInfo();
