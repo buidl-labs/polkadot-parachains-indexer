@@ -84,14 +84,7 @@ io.on('connection', async () => {
         result.filteredValidatorsList = await Validator.find();
         result.electedInfo = await EI.find();
         result.intentionsData = await Intention.find();
-        if(!(result.filteredValidatorsList.length > 0 
-            && result.electedInfo.length > 0 
-            && result.intentionsData.length > 0)){ //only fetch data if filteredValidatorsList, electedInfo and intentionsData is empty
-            let validators = await filteredValidatorData();
-            result.filteredValidatorsList = await Validator.insertMany(validators)
-            result.electedInfo = await getElectedInfo();
-            result.intentionsData = await getValidatorsAndIntentions();
-        }
+        //Manually fetch data initially to make sure collections are not empty
         io.emit("initial", result);
     }catch(err){
         console.log(err);
