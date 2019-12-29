@@ -48,7 +48,7 @@ eraChange.on("newEra", async () => {
         await EI.deleteMany({});
         await Intention.deleteMany({});
         let validators = await filteredValidatorData();
-        result.filteredValidatorsList = await Validator.insertMany(validators)
+        result.filteredValidatorsList = await Validator.insertMany(JSON.parse(JSON.stringify(validators)));
         result.electedInfo = await getElectedInfo();
         result.intentionsData = await getValidatorsAndIntentions();
         io.emit('onDataChange', result);
@@ -75,7 +75,7 @@ setInterval(async () => {
         }
             
     });
-}, 60000 * 4) //check for era change every 4 minutes
+}, 300000 * 4) //check for era change every 20 minutes
 
 
 io.on('connection', async () => {
@@ -94,59 +94,6 @@ app.get("/", (req, res) => {
     res.send("Api for polka analytics");
 })
 
-//manually fetch data incase collections are empty
-app.get("/manualfetch", async (req, res) => {
-    try{
-        let result = {};
-        result.filteredValidatorsList = await Validator.find();
-        result.electedInfo = await EI.find();
-        result.intentionsData = await Intention.find();
-        if(!(result.filteredValidatorsList.length > 0 
-            && result.electedInfo.length > 0 
-            && result.intentionsData.length > 0)){ //only fetch data if filteredValidatorsList, electedInfo and intentionsData is empty
-            let validators = await filteredValidatorData();
-            result.filteredValidatorsList = await Validator.insertMany(validators)
-            result.electedInfo = await getElectedInfo();
-            result.intentionsData = await getValidatorsAndIntentions();
-            result.newData = true;
-        }
-        res.send(result);
-    }catch(err){
-        res.status(400).send(err);
-    }
-});
-
-
-app.get("/test", async (req, res) => {
-    try{
-        const wsProvider = new WsProvider("wss://kusama-rpc.polkadot.io");
-        const api = await ApiPromise.create({ provider: wsProvider });
-        await api.isReady;
-        // Retrieve all validators
-        const allValidators = await api.query.staking.validators();
-        
-        // Parse validators
-        const parsedValidators = JSON.parse(JSON.stringify(allValidators))[0];
-        // Retrieve session validators
-        
-        const sessionValidators = await api.query.session.validators();
-        
-        const intentions = await parsedValidators.filter(
-            validator => !sessionValidators.includes(validator)
-        );
-        const validatorsAndIntentions = [...sessionValidators, ...intentions];
-
-        const result = await new Intention({
-            intentions: intentions,
-            validatorsAndIntentions: validatorsAndIntentions
-        })
-        const savedResult = await result.save();
-        res.send(savedResult);
-    }catch(err){
-        console.log(err);
-    }
-})
-
 //To keep heroku dyno awake
 setInterval(function () {
     https.get("https://evening-sea-52088.herokuapp.com/");
@@ -155,3 +102,5 @@ setInterval(function () {
 const PORT = process.env.PORT || 3004;
 const server = app.listen(PORT, () => console.log(`Connected on port: ${PORT}`));
 io.listen(server);
+
+server.setTimeout(300000 * 2) // after 10 minutes

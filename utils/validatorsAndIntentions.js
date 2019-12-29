@@ -19,8 +19,8 @@ async function validatorsAndIntentions(){
     const validatorsAndIntentions = [...sessionValidators, ...intentions];
 
     const result = await new Intention({
-        intentions: intentions,
-        validatorsAndIntentions: validatorsAndIntentions
+        intentions: JSON.parse(JSON.stringify(intentions)),
+        validatorsAndIntentions: JSON.parse(JSON.stringify(validatorsAndIntentions))
     })
     const savedResult = await result.save();
     return savedResult;
