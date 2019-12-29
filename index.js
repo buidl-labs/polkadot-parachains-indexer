@@ -84,7 +84,6 @@ io.on('connection', async () => {
         result.filteredValidatorsList = await Validator.find();
         result.electedInfo = await EI.find();
         result.intentionsData = await Intention.find();
-        //Manually fetch data initially to make sure collections are not empty
         io.emit("initial", result);
     }catch(err){
         console.log(err);
@@ -94,6 +93,28 @@ io.on('connection', async () => {
 app.get("/", (req, res) => {
     res.send("Api for polka analytics");
 })
+
+//manually fetch data incase collections are empty
+app.get("/manualfetch", async (req, res) => {
+    try{
+        let result = {};
+        result.filteredValidatorsList = await Validator.find();
+        result.electedInfo = await EI.find();
+        result.intentionsData = await Intention.find();
+        if(!(result.filteredValidatorsList.length > 0 
+            && result.electedInfo.length > 0 
+            && result.intentionsData.length > 0)){ //only fetch data if filteredValidatorsList, electedInfo and intentionsData is empty
+            let validators = await filteredValidatorData();
+            result.filteredValidatorsList = await Validator.insertMany(validators)
+            result.electedInfo = await getElectedInfo();
+            result.intentionsData = await getValidatorsAndIntentions();
+            result.newData = true;
+        }
+        res.send(result);
+    }catch(err){
+        res.status(400).send(err);
+    }
+});
 
 
 app.get("/test", async (req, res) => {
