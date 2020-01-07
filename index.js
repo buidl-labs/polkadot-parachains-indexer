@@ -163,6 +163,7 @@ const createApi = async () => {
  */
 eraChange.on("newEra", async () => {
     try{
+        console.log("era func start");
         let final = {};
         await Validator.deleteMany({});
         await EI.deleteMany({});
@@ -189,6 +190,7 @@ eraChange.on("newEra", async () => {
         final.electedInfo = savedElectedInfo
         final.intentionsData = savedIntention;
         io.emit('onDataChange', final);
+        console.log("era func end");
     }catch(err){
         console.log(err);
     }
@@ -205,7 +207,7 @@ eraChange.on("newEra", async () => {
 		if (!change.isZero()) {
       Sentry.captureMessage(`Era changed at: ${new Date()} previous eraIndex ${previousEraIndex}, current era index ${current}`);
 			previousEraIndex = current;
-			eraChange.emit("newEra");
+      eraChange.emit("newEra");
 		} else{
             // console.log("no change")
         }
@@ -234,8 +236,13 @@ setInterval(function () {
     https.get("https://evening-sea-52088.herokuapp.com/");
 }, 300000 * 5); // every 5 minutes (300000)
 
-const PORT = process.env.PORT || 3004;
+const PORT = process.env.PORT || 3006;
 const server = app.listen(PORT, () => console.log(`Connected on port: ${PORT}`));
+io.attach(server, {
+  pingInterval: 300000,
+  pingTimeout: 300000 * 2,
+  upgradeTimeout: 300000,
+})
 io.listen(server);
 
 server.setTimeout(300000 * 2) // after 10 minutes

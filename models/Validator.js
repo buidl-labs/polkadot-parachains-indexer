@@ -16,7 +16,7 @@ const Validator = new mongoose.Schema({
         required: true
     },
     poolReward: {
-        type: Number,
+        type: mongoose.Schema.Types.Mixed,
         required: true
     },
     totalStake: {
