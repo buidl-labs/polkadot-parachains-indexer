@@ -200,19 +200,16 @@ eraChange.on("newEra", async () => {
 (async () => {
     const wsProvider = new WsProvider("wss://kusama-rpc.polkadot.io");
     const api = await ApiPromise.create({ provider: wsProvider });
-    await api.isReady;
-    let previousEraIndex = await api.query.staking.currentEra();
-  	api.query.staking.currentEra(current => {
-		const change = current.sub(previousEraIndex);
-		if (!change.isZero()) {
-      Sentry.captureMessage(`Era changed at: ${new Date()} previous eraIndex ${previousEraIndex}, current era index ${current}`);
-			previousEraIndex = current;
-      eraChange.emit("newEra");
-		} else{
-            // console.log("no change")
-        }
-            
-  });
+
+    await api.derive.session.info(header => {
+      const eraProgress = header.eraProgress.toString();
+      // console.log(eraLength,eraProgress,sessionLength,sessionProgress)
+      if(parseInt(eraProgress) === 0){
+        Sentry.captureMessage(`Era changed at: ${new Date()}`);
+        eraChange.emit("newEra");
+      }
+      console.log(`eraProgress ${parseInt(eraProgress)}`);
+    });
 })()
 
 io.on('connection', async () => {
