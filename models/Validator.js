@@ -21,7 +21,7 @@ const Validator = new mongoose.Schema({
     },
     totalStake: {
         type: Number,
-        required: true,
+        default: 0.01
     },
     commission: {
         type: Number,

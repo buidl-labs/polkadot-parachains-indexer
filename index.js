@@ -130,7 +130,7 @@ const createApi = async () => {
         electedInfo = await api.derive.staking.electedInfo();
         const stakeInfo = await api.derive.staking.account(key.toString());
         const totalStake =
-          stakeInfo !== undefined
+        Object.keys(stakeInfo).length === 0 && stakeInfo.constructor === Object
             ? stakeInfo.stakers.total.toString() / 10 ** 12
             : undefined;
         result[key].totalStake = totalStake;
