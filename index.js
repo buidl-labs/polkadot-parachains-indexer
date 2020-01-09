@@ -228,6 +228,37 @@ app.get("/", (req, res) => {
     res.send("Api for polka analytics");
 })
 
+app.get("/manualfetch", async (req, res) => {
+  try {
+    await Validator.deleteMany({});
+    await EI.deleteMany({});
+    await Intention.deleteMany({});
+
+    const result = await createApi();
+
+    const savedValidator = await Validator.insertMany(
+      JSON.parse(JSON.stringify(result.filteredValidatorData))
+    );
+
+    const electedInfoData = new EI(
+      JSON.parse(JSON.stringify(result.electedInfo))
+    );
+    const savedElectedInfo = await electedInfoData.save();
+
+    const intentionData = new Intention({
+      intentions: JSON.parse(JSON.stringify(result.intentions)),
+      validatorsAndIntentions: JSON.parse(
+        JSON.stringify(result.validatorsAndIntentions)
+      )
+    });
+    const savedIntention = await intentionData.save();
+    
+    res.json({ savedValidator, savedElectedInfo, savedIntention });
+  } catch (err) {
+    res.status(400).json({ err: err, message: "error bro" });
+  }
+});
+
 //To keep heroku dyno awake
 setInterval(function () {
     https.get("https://evening-sea-52088.herokuapp.com/");
