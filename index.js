@@ -91,7 +91,7 @@ const createApi = async () => {
         await Promise.all(
           validator.map(async address => {
             const commission = await api.query.staking.validators(address);
-            const name = await api.query.nicks.nameOf(`${address.toString()}`);
+            // const name = await api.query.nicks.nameOf(`${address.toString()}`);
             result[address] = {
               stashId: address.toString(),
               stashIdTruncated: `${address
@@ -101,9 +101,10 @@ const createApi = async () => {
               poolReward: "",
               totalStake: "",
               commission: commission[0].commission.toNumber() / 10 ** 7,
-              name: name.raw[0]
-                ? hexToString(name.raw[0].toString())
-                : `Validator (...${address.toString().slice(-6, -1)})`
+              name: `Validator (...${address.toString().slice(-6, -1)})`
+              // name: name.raw[0]
+              //   ? hexToString(name.raw[0].toString())
+              //   : `Validator (...${address.toString().slice(-6, -1)})`
             };
           })
         );
@@ -255,6 +256,7 @@ app.get("/manualfetch", async (req, res) => {
     
     res.json({ savedValidator, savedElectedInfo, savedIntention });
   } catch (err) {
+    console.log("err", err)
     res.status(400).json({ err: err, message: "error bro" });
   }
 });
