@@ -10,10 +10,12 @@ const configDB = config.get('DB');
 const configSentryDns = config.get('SENTRY_DNS');
 const EI = require('./models/ElectedInfo');
 const Intention = require('./models/Intention');
+const ValidatorInfo = require('./models/ValidatorInfo');
 const Sentry = require('@sentry/node');
 const https = require('https');
 const { hexToString } = require('@polkadot/util');
 const getPolkaData = require('./utils/getPolkaData');
+const validatorsInfos = require('./routes/validatorsInfos');
 
 if (!config.get('DB')) {
   throw new Error('Database url is required!');
@@ -48,6 +50,8 @@ eraChange.on('newEra', async () => {
     await Validator.deleteMany({});
     await EI.deleteMany({});
     await Intention.deleteMany({});
+    await ValidatorInfo.deleteMany({});
+
     const result = await getPolkaData();
 
     const savedValidator = await Validator.insertMany(
@@ -58,6 +62,10 @@ eraChange.on('newEra', async () => {
       JSON.parse(JSON.stringify(result.electedInfo))
     );
     const savedElectedInfo = await electedInfoData.save();
+
+    await ValidatorInfo.insertMany(
+      JSON.parse(JSON.stringify(result.electedInfo.info))
+    );
 
     const intentionData = new Intention({
       intentions: JSON.parse(JSON.stringify(result.intentions)),
@@ -107,11 +115,14 @@ app.get('/', (req, res) => {
   res.send('Api for polka analytics');
 });
 
+app.use('/', validatorsInfos);
+
 app.get('/manualfetch', async (req, res) => {
   try {
     await Validator.deleteMany({});
     await EI.deleteMany({});
     await Intention.deleteMany({});
+    await ValidatorInfo.deleteMany({});
 
     const result = await getPolkaData();
 
@@ -123,6 +134,10 @@ app.get('/manualfetch', async (req, res) => {
       JSON.parse(JSON.stringify(result.electedInfo))
     );
     const savedElectedInfo = await electedInfoData.save();
+
+    await ValidatorInfo.insertMany(
+      JSON.parse(JSON.stringify(result.electedInfo.info))
+    );
 
     const intentionData = new Intention({
       intentions: JSON.parse(JSON.stringify(result.intentions)),
