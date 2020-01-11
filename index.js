@@ -130,9 +130,10 @@ const createApi = async () => {
           10 ** 12;
         electedInfo = await api.derive.staking.electedInfo();
         const stakeInfo = await api.derive.staking.account(key.toString());
+        const parsedStakeInfo = JSON.parse(JSON.stringify(stakeInfo));
         const totalStake =
-        Object.keys(stakeInfo).length === 0 && stakeInfo.constructor === Object
-            ? stakeInfo.stakers.total.toString() / 10 ** 12
+        Object.keys(parsedStakeInfo).length > 0 && parsedStakeInfo.constructor === Object
+            ? parsedStakeInfo.stakers.total.toString() / 10 ** 12
             : undefined;
         result[key].totalStake = totalStake;
         result[key].poolReward = isNaN(validatorPoolReward)
