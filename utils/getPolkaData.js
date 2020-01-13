@@ -85,6 +85,8 @@ const createApi = async () => {
     return 0;
   });
 
+  electedInfo = await api.derive.staking.electedInfo();
+
   const validatorData = await Promise.all(
     Object.keys(result).map(async (key, index) => {
       const validatorPoolReward =
@@ -92,7 +94,6 @@ const createApi = async () => {
           result[key].points.length) *
           reward) /
         10 ** 12;
-      electedInfo = await api.derive.staking.electedInfo();
       const stakeInfo = await api.derive.staking.account(key.toString());
       const parsedStakeInfo = JSON.parse(JSON.stringify(stakeInfo));
       const totalStake =
