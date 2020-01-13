@@ -171,7 +171,7 @@ setInterval(function() {
   https.get('https://evening-sea-52088.herokuapp.com/');
 }, 300000 * 5); // every 5 minutes (300000)
 
-const PORT = process.env.PORT || 3007;
+const PORT = process.env.PORT || 3008;
 const server = app.listen(PORT, () =>
   console.log(`Connected on port: ${PORT}`)
 );

@@ -1,38 +1,44 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
-const Validator = new mongoose.Schema({
+const Validator = new mongoose.Schema(
+  {
     stashId: {
-        type: String,
-        maxlength: 255,
-        required: true,
+      type: String,
+      maxlength: 255,
+      required: true
     },
     stashIdTruncated: {
-        type: String,
-        maxlength: 100,
-        required: true,
+      type: String,
+      maxlength: 100,
+      required: true
     },
     points: {
-        type: [Number],
-        required: true
+      type: [Number],
+      required: true
     },
     poolReward: {
-        type: mongoose.Schema.Types.Mixed,
-        required: true
+      type: mongoose.Schema.Types.Mixed,
+      required: true
     },
     totalStake: {
-        type: Number,
-        default: 0.01
+      type: Number,
+      default: 0.01
     },
     commission: {
-        type: Number,
-        required: true,
+      type: Number,
+      required: true
     },
     name: {
-        type: String,
-        required: true,
-        maxlength: 255,
+      type: String,
+      required: true,
+      maxlength: 255
+    },
+    noOfNominators: {
+      type: Number,
+      required: true
     }
+  },
+  { timestamps: true }
+);
 
-}, {timestamps: true});
-
-module.exports = mongoose.model("validators", Validator);
+module.exports = mongoose.model('validators', Validator);

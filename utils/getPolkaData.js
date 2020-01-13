@@ -101,6 +101,7 @@ const createApi = async () => {
           ? parsedStakeInfo.stakers.total.toString() / 10 ** 12
           : undefined;
       result[key].totalStake = totalStake;
+      result[key].noOfNominators = parsedStakeInfo.stakers.others.length;
       result[key].poolReward = isNaN(validatorPoolReward)
         ? 'Not enough data'
         : (1 - result[key].commission / 100) * validatorPoolReward;
@@ -113,6 +114,8 @@ const createApi = async () => {
   );
 
   //calculation of nominators data -- Start
+  //TODO: fix multiple nominators with same id issue, i.e avoid redundance
+  //eg nominator id: GRTHCT1fNRgbqMURtEDuZPBbQ7tHcgt3swzdmGNk1MKchqL
   const parsedElectedInfo = JSON.parse(JSON.stringify(electedInfo));
   //Store all the validators and electedInfo data
   const newData = filteredValidatorData.map(validator => {
