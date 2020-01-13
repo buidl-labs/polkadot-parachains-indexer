@@ -1,5 +1,6 @@
 const { ApiPromise, WsProvider } = require('@polkadot/api');
 const { hexToString } = require('@polkadot/util');
+const _ = require('lodash');
 
 const createApi = async () => {
   // console.log(`Connecting to API...`);
@@ -110,6 +111,81 @@ const createApi = async () => {
   const filteredValidatorData = validatorData.filter(curr =>
     currentValidators.includes(curr.stashId)
   );
+
+  //calculation of nominators data -- Start
+  const parsedElectedInfo = JSON.parse(JSON.stringify(electedInfo));
+  //Store all the validators and electedInfo data
+  const newData = filteredValidatorData.map(validator => {
+    const temp = parsedElectedInfo.info.find(currentValidator => {
+      if (currentValidator.stashId === validator.stashId) {
+        return true;
+      }
+    });
+    return {
+      electedInfo: temp,
+      validator: validator
+    };
+  });
+
+  //Store all the unique nominators
+  const nominators = [];
+  newData.forEach(data => {
+    data.electedInfo.stakers.others.forEach(nom => {
+      const tempObj = { who: nom.who, value: nom.value };
+      if (!_.some(nominators, tempObj)) {
+        nominators.push(tempObj);
+      }
+    });
+  });
+
+  //Store all the validators, electedInfo data to nominator
+  const finalNominatorsList = [];
+  nominators.map(nom => {
+    let temp = [];
+    newData.forEach(data => {
+      data.electedInfo.stakers.others.forEach(curr => {
+        if (nom.who.toString() === curr.who.toString()) {
+          temp.push({
+            validator: data,
+            staked: curr.value / 10 ** 12
+          });
+        }
+      });
+    });
+
+    if (temp.length > 0) {
+      //for reference: https://docs.google.com/document/d/13dLBH5Ngu63lCQryRW3BiiJlXlYllg_fAzAObmOh0gw/edit?pli=1
+      let sum = 0;
+      for (let i = 0; i < temp.length; i++) {
+        //Logic for calculating expected daily ROI
+        //Commission is already taken into account while calculating poolReward
+        const { totalStake, poolReward } = temp[i].validator.validator;
+        sum += (temp[0].staked / totalStake) * poolReward;
+      }
+
+      const ERA_PER_DAY = 4;
+      const expectedDailyRoi = (sum * ERA_PER_DAY).toFixed(3);
+
+      const total = temp.reduce((acc, curr) => {
+        return acc + curr.staked;
+      }, 0);
+      const highest = Math.max(...temp.map(validator => validator.staked));
+      const other = total - highest;
+      finalNominatorsList.push({
+        nominatorId: nom.who,
+        validators: temp,
+        totalStaked: parseFloat(total.toFixed(3)),
+        highestStaked: parseFloat(highest.toFixed(3)),
+        othersStaked: parseFloat(other.toFixed(3)),
+        expectedDailyRoi: parseFloat(expectedDailyRoi),
+        backers: temp.length
+      });
+      temp = [];
+    }
+  });
+
+  //calculation of nominators data -- End
+
   // setApiConnected(true);
   // setValidatorData(filteredValidatorData);
   // setIntentionData(intentions);
@@ -118,7 +194,8 @@ const createApi = async () => {
     filteredValidatorData,
     intentions,
     validatorsAndIntentions,
-    electedInfo
+    electedInfo,
+    finalNominatorsList
   };
 };
 module.exports = createApi;
