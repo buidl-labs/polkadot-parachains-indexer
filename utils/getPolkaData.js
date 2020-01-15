@@ -64,7 +64,7 @@ const createApi = async () => {
             const name = identityJSON.info.display.Raw;
             validatorName = hexToString(name);
           } catch (err) {
-            console.log('Error', err);
+            // console.log('Error', err);
           }
           result[address] = {
             stashId: address.toString(),
@@ -200,6 +200,32 @@ const createApi = async () => {
     }
   });
 
+  const filteredValidatorInfos = filteredValidatorData.map(validator => {
+    const temp = JSON.parse(JSON.stringify(electedInfo)).info.find(
+      currentValidator => {
+        if (currentValidator.stashId === validator.stashId) {
+          return true;
+        }
+      }
+    );
+    // console.log('electedInfo value', temp);
+    return {
+      currentValidator: temp,
+      stashId: validator.stashId,
+      stashIdTruncated: validator.stashIdTruncated,
+      points: validator.points,
+      poolReward: validator.poolReward,
+      totalStake: validator.totalStake,
+      commission: validator.commission,
+      name: validator.name,
+      noOfNominators: validator.noOfNominators
+    };
+  });
+
+  // await ValidatorInfo.insertMany(
+  //   JSON.parse(JSON.stringify(filteredValidators))
+  // );
+
   //calculation of nominators data -- End
 
   // setApiConnected(true);
@@ -211,7 +237,8 @@ const createApi = async () => {
     intentions,
     validatorsAndIntentions,
     electedInfo,
-    finalNominatorsList
+    finalNominatorsList,
+    filteredValidatorInfos
   };
 };
 module.exports = createApi;

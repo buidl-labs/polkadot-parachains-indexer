@@ -2,32 +2,68 @@ const mongoose = require('mongoose');
 
 const ValidatorInfo = new mongoose.Schema(
   {
-    accountId: String,
-    controllerId: String,
-    nominators: [],
-    rewardDestination: Number,
-    stakers: {
-      total: String,
-      own: Number,
-      others: [
-        {
-          who: String,
-          value: Number
-        }
-      ]
+    currentValidator: {
+      accountId: String,
+      controllerId: String,
+      nominators: [],
+      rewardDestination: Number,
+      stakers: {
+        total: String,
+        own: Number,
+        others: [
+          {
+            who: String,
+            value: Number
+          }
+        ]
+      },
+      stakingLedger: {
+        stash: String,
+        total: Number,
+        active: Number,
+        unlocking: []
+      },
+      stashId: String,
+      validatorPrefs: {
+        commission: Number
+      },
+      nextSessionIds: [String],
+      sessionIds: [String]
     },
-    stakingLedger: {
-      stash: String,
-      total: Number,
-      active: Number,
-      unlocking: []
+    stashId: {
+      type: String,
+      required: true
     },
-    stashId: String,
-    validatorPrefs: {
-      commission: Number
+    stashIdTruncated: {
+      type: String,
+      maxlength: 100,
+      required: true
     },
-    nextSessionIds: [String],
-    sessionIds: [String]
+    points: {
+      type: [Number],
+      required: true
+    },
+    poolReward: {
+      type: mongoose.Schema.Types.Mixed,
+      required: true
+    },
+    totalStake: {
+      type: Number,
+      default: 0
+    },
+    commission: {
+      type: Number,
+      required: true
+    },
+    name: {
+      type: String,
+      required: true,
+      maxlength: 255
+    },
+    noOfNominators: {
+      type: Number,
+      required: true
+    }
   },
   { timestamps: true }
 );

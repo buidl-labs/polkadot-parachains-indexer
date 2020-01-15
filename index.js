@@ -69,7 +69,7 @@ eraChange.on('newEra', async () => {
     const savedElectedInfo = await electedInfoData.save();
 
     await ValidatorInfo.insertMany(
-      JSON.parse(JSON.stringify(result.electedInfo.info))
+      JSON.parse(JSON.stringify(result.filteredValidatorInfos))
     );
 
     const intentionData = new Intention({
@@ -146,7 +146,7 @@ app.get('/manualfetch', async (req, res) => {
     const savedElectedInfo = await electedInfoData.save();
 
     await ValidatorInfo.insertMany(
-      JSON.parse(JSON.stringify(result.electedInfo.info))
+      JSON.parse(JSON.stringify(result.filteredValidatorInfos))
     );
 
     const intentionData = new Intention({
