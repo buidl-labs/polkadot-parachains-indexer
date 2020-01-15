@@ -55,7 +55,17 @@ const createApi = async () => {
       await Promise.all(
         validator.map(async address => {
           const commission = await api.query.staking.validators(address);
-          // const name = await api.query.nicks.nameOf(`${address.toString()}`);
+          let validatorName;
+          try {
+            const identity = await api.query.identity.identityOf(
+              address.toString()
+            );
+            const identityJSON = identity.toJSON();
+            const name = identityJSON.info.display.Raw;
+            validatorName = hexToString(name);
+          } catch (err) {
+            console.log('Error', err);
+          }
           result[address] = {
             stashId: address.toString(),
             stashIdTruncated: `${address
@@ -65,7 +75,9 @@ const createApi = async () => {
             poolReward: '',
             totalStake: '',
             commission: commission[0].commission.toNumber() / 10 ** 7,
-            name: `Validator (...${address.toString().slice(-6, -1)})`
+            name: validatorName
+              ? validatorName
+              : `Validator (...${address.toString().slice(-6, -1)})`
             // name: name.raw[0]
             //   ? hexToString(name.raw[0].toString())
             //   : `Validator (...${address.toString().slice(-6, -1)})`
