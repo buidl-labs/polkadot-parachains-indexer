@@ -5,6 +5,11 @@ router.get('/validatorinfo/:id', async (req, res) => {
   try {
     const id = req.params.id;
     const result = await ValidatorInfo.find({ stashId: id });
+    //If no validator found
+    if (!(result.length > 0)) {
+      res.json({ message: 'No Validator found!', noValidator: true });
+      return;
+    }
     const currentvalidator = result[0];
     const totalValue = currentvalidator.stakers.total / 10 ** 12;
     const ownValue = currentvalidator.stakers.own / 10 ** 12;
@@ -26,7 +31,7 @@ router.get('/validatorinfo/:id', async (req, res) => {
     };
     res.json(tempObj);
   } catch (err) {
-    res.status(400).send({ error: 'Error Bro', err: err });
+    res.status(400).send({ error: 'Error', err: err });
   }
 });
 
