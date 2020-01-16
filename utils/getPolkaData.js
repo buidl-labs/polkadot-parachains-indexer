@@ -54,33 +54,28 @@ const createApi = async () => {
     validatorList.map(async validator => {
       await Promise.all(
         validator.map(async address => {
+          let name = `Validator (...${address.toString().slice(-6)})`;
           const commission = await api.query.staking.validators(address);
-          let validatorName;
           try {
-            const identity = await api.query.identity.identityOf(
-              address.toString()
-            );
+            const identity = await api.query.identity.identityOf(address);
             const identityJSON = identity.toJSON();
-            const name = identityJSON.info.display.Raw;
-            validatorName = hexToString(name);
-          } catch (err) {
-            // console.log('Error', err);
+            if (identityJSON !== null) {
+              name = hexToString(identityJSON.info.display.Raw);
+            }
+          } catch (e) {
+            console.error(e);
           }
+          // const name = await api.query.nicks.nameOf(`${address.toString()}`);
           result[address] = {
             stashId: address.toString(),
             stashIdTruncated: `${address
               .toString()
-              .slice(0, 4)}...${address.toString().slice(-6, -1)}`,
+              .slice(0, 4)}...${address.toString().slice(-6)}`,
             points: [],
             poolReward: '',
             totalStake: '',
             commission: commission[0].commission.toNumber() / 10 ** 7,
-            name: validatorName
-              ? validatorName
-              : `Validator (...${address.toString().slice(-6, -1)})`
-            // name: name.raw[0]
-            //   ? hexToString(name.raw[0].toString())
-            //   : `Validator (...${address.toString().slice(-6, -1)})`
+            name: name
           };
         })
       );
@@ -200,32 +195,6 @@ const createApi = async () => {
     }
   });
 
-  const filteredValidatorInfos = filteredValidatorData.map(validator => {
-    const temp = JSON.parse(JSON.stringify(electedInfo)).info.find(
-      currentValidator => {
-        if (currentValidator.stashId === validator.stashId) {
-          return true;
-        }
-      }
-    );
-    // console.log('electedInfo value', temp);
-    return {
-      currentValidator: temp,
-      stashId: validator.stashId,
-      stashIdTruncated: validator.stashIdTruncated,
-      points: validator.points,
-      poolReward: validator.poolReward,
-      totalStake: validator.totalStake,
-      commission: validator.commission,
-      name: validator.name,
-      noOfNominators: validator.noOfNominators
-    };
-  });
-
-  // await ValidatorInfo.insertMany(
-  //   JSON.parse(JSON.stringify(filteredValidators))
-  // );
-
   //calculation of nominators data -- End
 
   // setApiConnected(true);
@@ -237,8 +206,7 @@ const createApi = async () => {
     intentions,
     validatorsAndIntentions,
     electedInfo,
-    finalNominatorsList,
-    filteredValidatorInfos
+    finalNominatorsList
   };
 };
 module.exports = createApi;
