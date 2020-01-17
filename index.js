@@ -50,14 +50,15 @@ mongoose
 eraChange.on('newEra', async () => {
   try {
     console.log('era func start');
+
+    const result = await getPolkaData();
+
     let final = {};
     await Validator.deleteMany({});
     await EI.deleteMany({});
     await Intention.deleteMany({});
     await ValidatorInfo.deleteMany({});
     await Nominator.deleteMany({});
-
-    const result = await getPolkaData();
 
     const savedValidator = await Validator.insertMany(
       JSON.parse(JSON.stringify(result.filteredValidatorData))
@@ -128,13 +129,13 @@ app.use('/', nominatorInfos);
 
 app.get('/manualfetch', async (req, res) => {
   try {
+    const result = await getPolkaData();
+
     await Validator.deleteMany({});
     await EI.deleteMany({});
     await Intention.deleteMany({});
     await ValidatorInfo.deleteMany({});
     await Nominator.deleteMany({});
-
-    const result = await getPolkaData();
 
     const savedValidator = await Validator.insertMany(
       JSON.parse(JSON.stringify(result.filteredValidatorData))
@@ -167,11 +168,11 @@ app.get('/manualfetch', async (req, res) => {
 });
 
 //To keep heroku dyno awake
-setInterval(function() {
-  https.get('https://evening-sea-52088.herokuapp.com/');
-}, 300000 * 5); // every 5 minutes (300000)
+// setInterval(function() {
+//   https.get('https://evening-sea-52088.herokuapp.com/');
+// }, 300000 * 5); // every 5 minutes (300000)
 
-const PORT = process.env.PORT || 3008;
+const PORT = process.env.PORT || 3009;
 const server = app.listen(PORT, () =>
   console.log(`Connected on port: ${PORT}`)
 );
