@@ -60,6 +60,9 @@ eraChange.on('newEra', async () => {
     await ValidatorInfo.deleteMany({});
     await Nominator.deleteMany({});
 
+    await Nominator.insertMany(
+      JSON.parse(JSON.stringify(result.finalNominatorsList)));
+
     const savedValidator = await Validator.insertMany(
       JSON.parse(JSON.stringify(result.filteredValidatorData))
     );
@@ -80,8 +83,6 @@ eraChange.on('newEra', async () => {
       )
     });
     const savedIntention = await intentionData.save();
-
-    await Nominator.insertMany(result.finalNominatorsList);
 
     final.filteredValidatorsList = savedValidator;
     final.electedInfo = savedElectedInfo;
@@ -158,7 +159,8 @@ app.get('/manualfetch', async (req, res) => {
     });
     const savedIntention = await intentionData.save();
 
-    await Nominator.insertMany(result.finalNominatorsList);
+    await Nominator.insertMany(
+      JSON.parse(JSON.stringify(result.finalNominatorsList)));
 
     res.json({ savedValidator, savedElectedInfo, savedIntention });
   } catch (err) {
