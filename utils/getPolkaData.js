@@ -121,6 +121,28 @@ const createApi = async () => {
     currentValidators.includes(curr.stashId)
   );
 
+  const filteredValidatorInfos = filteredValidatorData.map(validator => {
+    const temp = JSON.parse(JSON.stringify(electedInfo)).info.find(
+      currentValidator => {
+        if (currentValidator.stashId === validator.stashId) {
+          return true;
+        }
+      }
+    );
+    // console.log('electedInfo value', temp);
+    return {
+      currentValidator: temp,
+      stashId: validator.stashId,
+      stashIdTruncated: validator.stashIdTruncated,
+      points: validator.points,
+      poolReward: validator.poolReward,
+      totalStake: validator.totalStake,
+      commission: validator.commission,
+      name: validator.name,
+      noOfNominators: validator.noOfNominators
+    };
+  });
+
   //calculation of nominators data -- Start
   //TODO: fix multiple nominators with same id issue, i.e avoid redundance
   //eg nominator id: GRTHCT1fNRgbqMURtEDuZPBbQ7tHcgt3swzdmGNk1MKchqL
@@ -206,7 +228,8 @@ const createApi = async () => {
     intentions,
     validatorsAndIntentions,
     electedInfo,
-    finalNominatorsList
+    finalNominatorsList,
+    filteredValidatorInfos
   };
 };
 module.exports = createApi;
