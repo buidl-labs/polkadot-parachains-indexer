@@ -110,6 +110,7 @@ const createApi = async () => {
           : undefined;
       result[key].totalStake = totalStake;
       result[key].noOfNominators = parsedStakeInfo.stakers.others.length;
+      result[key].poolRewardWithCommission = isNaN(validatorPoolReward) ? 'Not enough data' : validatorPoolReward;
       result[key].poolReward = isNaN(validatorPoolReward)
         ? 'Not enough data'
         : (1 - result[key].commission / 100) * validatorPoolReward;
@@ -139,7 +140,8 @@ const createApi = async () => {
       totalStake: validator.totalStake,
       commission: validator.commission,
       name: validator.name,
-      noOfNominators: validator.noOfNominators
+      noOfNominators: validator.noOfNominators,
+      poolRewardWithCommission: validator.poolRewardWithCommission,
     };
   });
 

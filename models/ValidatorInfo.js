@@ -63,6 +63,10 @@ const ValidatorInfo = new mongoose.Schema(
     noOfNominators: {
       type: Number,
       required: true
+    },
+    poolRewardWithCommission: {
+      type: mongoose.Schema.Types.Mixed,
+      required: true
     }
   },
   { timestamps: true }
