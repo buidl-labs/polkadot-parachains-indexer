@@ -13,11 +13,12 @@ const Intention = require('./models/Intention');
 const ValidatorInfo = require('./models/ValidatorInfo');
 const Nominator = require('./models/NominatorInfo');
 const Sentry = require('@sentry/node');
-const https = require('https');
+// const https = require('https');
 const { hexToString } = require('@polkadot/util');
 const getPolkaData = require('./utils/getPolkaData');
 const validatorsInfos = require('./routes/validatorsInfos');
 const nominatorInfos = require('./routes/nominatorinfos');
+const intentions = require('./routes/intentions');
 
 const _ = require('lodash');
 
@@ -127,6 +128,7 @@ app.get('/', (req, res) => {
 
 app.use('/', validatorsInfos);
 app.use('/', nominatorInfos);
+app.use('/', intentions);
 
 app.get('/manualfetch', async (req, res) => {
   try {
