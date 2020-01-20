@@ -21,9 +21,8 @@ const Nominator = new mongoose.Schema(
               required: true
             },
             poolReward: {
-              type: Number,
+              type: mongoose.Schema.Types.Mixed,
               required: true,
-              default: 0.01
             },
             commission: {
               type: Number,
@@ -80,7 +79,7 @@ const Nominator = new mongoose.Schema(
     },
     expectedDailyRoi: {
       type: Number,
-      required: true
+      default: 0,
     },
     backers: {
       type: Number,

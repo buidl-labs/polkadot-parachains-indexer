@@ -199,7 +199,7 @@ const createApi = async () => {
       }
 
       const ERA_PER_DAY = 4;
-      const expectedDailyRoi = (sum * ERA_PER_DAY).toFixed(3);
+      const expectedDailyRoi = (sum * ERA_PER_DAY).toFixed(3) ? (sum * ERA_PER_DAY).toFixed(3) : 0;
 
       const total = temp.reduce((acc, curr) => {
         return acc + curr.staked;
