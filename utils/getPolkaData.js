@@ -110,7 +110,9 @@ const createApi = async () => {
           : undefined;
       result[key].totalStake = totalStake;
       result[key].noOfNominators = parsedStakeInfo.stakers.others.length;
-      result[key].poolRewardWithCommission = isNaN(validatorPoolReward) ? 'Not enough data' : validatorPoolReward;
+      result[key].poolRewardWithCommission = isNaN(validatorPoolReward)
+        ? 'Not enough data'
+        : validatorPoolReward;
       result[key].poolReward = isNaN(validatorPoolReward)
         ? 'Not enough data'
         : (1 - result[key].commission / 100) * validatorPoolReward;
@@ -141,13 +143,11 @@ const createApi = async () => {
       commission: validator.commission,
       name: validator.name,
       noOfNominators: validator.noOfNominators,
-      poolRewardWithCommission: validator.poolRewardWithCommission,
+      poolRewardWithCommission: validator.poolRewardWithCommission
     };
   });
 
   //calculation of nominators data -- Start
-  //TODO: fix multiple nominators with same id issue, i.e avoid redundance
-  //eg nominator id: GRTHCT1fNRgbqMURtEDuZPBbQ7tHcgt3swzdmGNk1MKchqL
   const parsedElectedInfo = JSON.parse(JSON.stringify(electedInfo));
   //Store all the validators and electedInfo data
   const newData = filteredValidatorData.map(validator => {
@@ -167,7 +167,7 @@ const createApi = async () => {
   newData.forEach(data => {
     data.electedInfo.stakers.others.forEach(nom => {
       const tempObj = { who: nom.who, value: nom.value };
-      if (!_.some(nominators, tempObj)) {
+      if (!nominators.some(nom => nom.who === tempObj.who)) {
         nominators.push(tempObj);
       }
     });
@@ -199,7 +199,9 @@ const createApi = async () => {
       }
 
       const ERA_PER_DAY = 4;
-      const expectedDailyRoi = (sum * ERA_PER_DAY).toFixed(3) ? (sum * ERA_PER_DAY).toFixed(3) : 0;
+      const expectedDailyRoi = (sum * ERA_PER_DAY).toFixed(3)
+        ? (sum * ERA_PER_DAY).toFixed(3)
+        : 0;
 
       const total = temp.reduce((acc, curr) => {
         return acc + curr.staked;
