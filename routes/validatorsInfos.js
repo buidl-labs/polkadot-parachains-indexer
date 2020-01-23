@@ -38,4 +38,18 @@ router.get('/validatorinfo/:id', async (req, res) => {
   }
 });
 
+router.get('/validatorinfo', async (req, res) => {
+  try {
+    const result = await ValidatorInfo.find().lean();
+    //If no validator found
+    if (!(result.length > 0)) {
+      res.json([]);
+      return;
+    }
+    res.json(result);
+  } catch (err) {
+    res.status(400).send({ error: 'Error', err: err });
+  }
+});
+
 module.exports = router;
