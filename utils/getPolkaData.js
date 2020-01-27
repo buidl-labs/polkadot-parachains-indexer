@@ -239,6 +239,8 @@ const createApi = async () => {
     }
   });
 
+  wsProvider.disconnect();
+
   //calculation of nominators data -- End
 
   // setApiConnected(true);
