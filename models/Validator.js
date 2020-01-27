@@ -40,6 +40,10 @@ const Validator = new mongoose.Schema(
     poolRewardWithCommission: {
       type: mongoose.Schema.Types.Mixed,
       required: true
+    },
+    accountIndex: {
+      type: String,
+      required: true
     }
   },
   { timestamps: true }

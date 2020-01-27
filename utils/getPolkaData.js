@@ -125,7 +125,19 @@ const createApi = async () => {
       return result[key];
     })
   );
-  const filteredValidatorData = validatorData.filter(curr =>
+
+  const indexes = await api.derive.accounts.indexes();
+  const validatorDataWithAccountIndex = validatorData.map(validator => {
+    const array = Object.entries(indexes).find(val => {
+      return validator.stashId === val[0];
+    });
+    return {
+      ...validator,
+      accountIndex: array[1].toString()
+    };
+  });
+
+  const filteredValidatorData = validatorDataWithAccountIndex.filter(curr =>
     currentValidators.includes(curr.stashId)
   );
 
@@ -148,7 +160,8 @@ const createApi = async () => {
       commission: validator.commission,
       name: validator.name,
       noOfNominators: validator.noOfNominators,
-      poolRewardWithCommission: validator.poolRewardWithCommission
+      poolRewardWithCommission: validator.poolRewardWithCommission,
+      accountIndex: validator.accountIndex
     };
   });
 
