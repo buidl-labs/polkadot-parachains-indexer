@@ -28,6 +28,11 @@ const createApi = async () => {
   const intentions = await parsedValidators.filter(
     validator => !sessionValidators.includes(validator)
   );
+
+  const intentionsTotalInfo = await Promise.all(
+    intentions.map(val => api.derive.staking.account(val))
+  );
+
   const validatorsAndIntentions = [...sessionValidators, ...intentions];
   // Retrieve the last known era reward
   const reward = await rewardData[0].attributes.attributes[0].value;
@@ -233,7 +238,8 @@ const createApi = async () => {
     validatorsAndIntentions,
     electedInfo,
     finalNominatorsList,
-    filteredValidatorInfos
+    filteredValidatorInfos,
+    intentionsTotalInfo
   };
 };
 module.exports = createApi;

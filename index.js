@@ -62,7 +62,8 @@ eraChange.on('newEra', async () => {
     await Nominator.deleteMany({});
 
     await Nominator.insertMany(
-      JSON.parse(JSON.stringify(result.finalNominatorsList)));
+      JSON.parse(JSON.stringify(result.finalNominatorsList))
+    );
 
     const savedValidator = await Validator.insertMany(
       JSON.parse(JSON.stringify(result.filteredValidatorData))
@@ -81,7 +82,8 @@ eraChange.on('newEra', async () => {
       intentions: JSON.parse(JSON.stringify(result.intentions)),
       validatorsAndIntentions: JSON.parse(
         JSON.stringify(result.validatorsAndIntentions)
-      )
+      ),
+      info: JSON.parse(JSON.stringify(result.intentionsTotalInfo))
     });
     const savedIntention = await intentionData.save();
 
@@ -157,12 +159,14 @@ app.get('/manualfetch', async (req, res) => {
       intentions: JSON.parse(JSON.stringify(result.intentions)),
       validatorsAndIntentions: JSON.parse(
         JSON.stringify(result.validatorsAndIntentions)
-      )
+      ),
+      info: JSON.parse(JSON.stringify(result.intentionsTotalInfo))
     });
     const savedIntention = await intentionData.save();
 
     await Nominator.insertMany(
-      JSON.parse(JSON.stringify(result.finalNominatorsList)));
+      JSON.parse(JSON.stringify(result.finalNominatorsList))
+    );
 
     res.json({ savedValidator, savedElectedInfo, savedIntention });
   } catch (err) {
@@ -170,6 +174,30 @@ app.get('/manualfetch', async (req, res) => {
     res.status(400).json({ err: err, message: 'error bro' });
   }
 });
+
+// app.get('/yo', async (req, res) => {
+//   try {
+//     const wsProvider = new WsProvider('wss://kusama-rpc.polkadot.io');
+//     const api = await ApiPromise.create({ provider: wsProvider });
+//     // Retrieve all validators
+//     const allValidators = await api.query.staking.validators();
+//     // Parse validators
+//     const parsedValidators = JSON.parse(JSON.stringify(allValidators))[0];
+//     // Retrieve session validators
+//     const sessionValidators = await api.query.session.validators();
+//     const intentions = await parsedValidators.filter(
+//       validator => !sessionValidators.includes(validator)
+//     );
+
+//     const intentionstotalinfo = await Promise.all(
+//       intentions.map(val => api.derive.staking.account(val))
+//     );
+
+//     res.json(JSON.parse(JSON.stringify(intentionstotalinfo)));
+//   } catch (err) {
+//     console.log(err);
+//   }
+// });
 
 //To keep heroku dyno awake
 // setInterval(function() {
