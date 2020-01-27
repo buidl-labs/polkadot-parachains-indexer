@@ -22,7 +22,7 @@
     "express": "^4.17.1",
     "helmet": "^3.21.2",
     "lodash": "^4.17.15",
-    "mongoose": "^5.8.1",
+    "mongoose": "^5.8.10",
     "socket.io": "^2.3.0"
   },
   "devDependencies": {
