@@ -1,10 +1,37 @@
 const mongoose = require('mongoose');
 
-const Validator = new mongoose.Schema(
+const ValidatorInfo = new mongoose.Schema(
   {
+    currentValidator: {
+      accountId: String,
+      controllerId: String,
+      nominators: [],
+      rewardDestination: Number,
+      stakers: {
+        total: String,
+        own: Number,
+        others: [
+          {
+            who: String,
+            value: Number
+          }
+        ]
+      },
+      stakingLedger: {
+        stash: String,
+        total: Number,
+        active: Number,
+        unlocking: []
+      },
+      stashId: String,
+      validatorPrefs: {
+        commission: Number
+      },
+      nextSessionIds: [String],
+      sessionIds: [String]
+    },
     stashId: {
       type: String,
-      maxlength: 255,
       required: true
     },
     stashIdTruncated: {
@@ -49,4 +76,4 @@ const Validator = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model('validators', Validator);
+module.exports = mongoose.model('validatorinfos', ValidatorInfo);
