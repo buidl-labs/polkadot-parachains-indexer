@@ -4,7 +4,7 @@
   "description": "Api for polka analytics",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon index.js",
+    "dev": "nodemon --inspect index.js",
     "start": "node index.js",
     "build": "npm install",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -21,6 +21,7 @@
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "helmet": "^3.21.2",
+    "lodash": "^4.17.15",
     "mongoose": "^5.8.1",
     "socket.io": "^2.3.0"
   },
