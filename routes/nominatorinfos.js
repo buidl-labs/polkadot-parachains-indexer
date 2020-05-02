@@ -3,7 +3,7 @@ const Nominator = require('../models/NominatorInfo');
 
 router.get('/nominatorinfo/:id', async (req, res) => {
   try {
-    const id = req.params.id;
+    const {id} = req.params;
     const result = await Nominator.find({ nominatorId: id });
     const currentNominator = result[0];
 
@@ -24,7 +24,21 @@ router.get('/nominatorinfo/:id', async (req, res) => {
 
     res.json(tempObj);
   } catch (err) {
-    res.status(400).send({ err: 'Error Bro', err: err });
+    res.status(400).send({ err: 'Error Bro', err });
+  }
+});
+
+router.get('/nominatorsinfo', async (req, res) => {
+  try {
+    const result = await Nominator.find().lean();
+    // If no validator found
+    if (!(result.length > 0)) {
+      res.json([]);
+      return;
+    }
+    res.json(result);
+  } catch (err) {
+    res.status(400).send({ error: 'Error', err });
   }
 });
 
