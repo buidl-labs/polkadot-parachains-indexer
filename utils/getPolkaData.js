@@ -12,8 +12,8 @@ const createApi = async () => {
   // console.clear();
   // Fetch recent reward events from Polkascan
   const res = await fetch(
-    'https://host-01.polkascan.io/kusama/api/v1/event?&filter[module_id]=staking&filter[event_id]=Reward&page[size]=10',
-  );
+		"https://api-01.polkascan.io/kusama/api/v1/event?&filter[module_id]=staking&filter[event_id]=Reward&page[size]=10"
+	);
   const json = await res.json();
   const rewardData = await json.data;
 
