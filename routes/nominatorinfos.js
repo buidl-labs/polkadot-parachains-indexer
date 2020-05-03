@@ -31,11 +31,12 @@ router.get('/nominatorinfo/:id', async (req, res) => {
 router.get('/nominatorsinfo', async (req, res) => {
   try {
     const result = await Nominator.find().lean();
-    // If no validator found
+    // If no nominator found
     if (!(result.length > 0)) {
       res.json([]);
       return;
-    }
+	}
+
     res.json(result);
   } catch (err) {
     res.status(400).send({ error: 'Error', err });
