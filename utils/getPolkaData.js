@@ -158,6 +158,7 @@ const createApi = async () => {
 				)
 			).then(
 				() => {
+					//era points fraction in 84 previous era's
 					Object.entries(erasRewardPoints.individual.toJSON()).forEach(
 						([address, points]) => {
 							previousValidatorsList[address.toString()].points.push(
