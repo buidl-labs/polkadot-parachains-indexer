@@ -18,7 +18,7 @@ router.get('/nominatorinfo/:id', async (req, res) => {
       totalStaked: currentNominator.totalStaked,
       highestStaked: currentNominator.highestStaked,
       othersStaked: currentNominator.othersStaked,
-      expectedDailyRoi: currentNominator.expectedDailyRoi,
+      // expectedDailyRoi: currentNominator.expectedDailyRoi,
       backers: currentNominator.backers
     };
 

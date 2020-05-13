@@ -28,6 +28,7 @@ const intentions = async previousEraPoints => {
 	const accountInfo = await Promise.all(
 		intentions.map(addr => api.derive.accounts.info(addr))
 	);
+	const validatorsAndIntentions = [...activeValidators, ...intentions];
 
 	//
 	//
@@ -61,7 +62,7 @@ const intentions = async previousEraPoints => {
 		});
 	});
 
-	return [intentions, intentionsStakingInfo, intentionsAccountInfo];
+	return [intentions, intentionsStakingInfo, validatorsAndIntentions, intentionsAccountInfo];
 };
 
 module.exports = intentions;

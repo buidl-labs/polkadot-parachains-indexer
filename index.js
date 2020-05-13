@@ -15,7 +15,12 @@ const Nominator = require("./models/NominatorInfo");
 const Sentry = require("@sentry/node");
 // const https = require('https');
 const { hexToString } = require("@polkadot/util");
-const getPolkaData = require("./utils/getPolkaData");
+const eraPointsHistory = require("./isolatedScripts/eraPointsHistory");
+const validatorsIS = require("./isolatedScripts/validators")
+const intentionsIS = require("./isolatedScripts/intentions")
+const validatorsInfoIS = require("./isolatedScripts/validatorsInfo")
+const nominatorsIS = require("./isolatedScripts/nominators")
+// const getPolkaData = require("./utils/getPolkaData");
 const validatorsInfos = require("./routes/validatorsInfos");
 const nominatorInfos = require("./routes/nominatorinfos");
 const intentions = require("./routes/intentions");
@@ -50,9 +55,44 @@ mongoose
  */
 eraChange.on("newEra", async () => {
 	try {
-		console.log("era func start");
+		// console.log("era func start");
 
-		const result = await getPolkaData();
+		// const result = await getPolkaData();
+		console.log("get previous eraPoints");
+		const previousEraPoints = await eraPointsHistory();
+		// console.log(JSON.stringify(previousEraPoints));
+
+		// get active validators
+		console.log("get validators");
+		const validatorsData = await validatorsIS(previousEraPoints);
+		// console.log(JSON.stringify(validatorsData));
+
+		// get validators Info
+		console.log("get validators Info");
+		const [validatorsInfoData, electedInfo] = await validatorsInfoIS(
+			validatorsData
+		);
+		// console.log("electedInfo");
+		// console.log(JSON.stringify(electedInfo));
+		// console.log("validatorsInfoData");
+		// console.log(JSON.stringify(validatorsInfoData));
+
+		//get intentions
+		console.log("get intentions");
+		const [intention, intentionsTotalInfo, validatorsAndIntentions, intentionsData] = await intentionsIS(
+			previousEraPoints
+		);
+		// console.log("intention");
+		// console.log(JSON.stringify(intention));
+		// console.log("intentionsTotalInfo");
+		// console.log(JSON.stringify(intentionsTotalInfo));
+		// console.log("intentionsData");
+		// console.log(JSON.stringify(intentionsData));
+
+		// get nominatorsData
+		console.log("get nominators");
+		const nominatorsData = await nominatorsIS(validatorsInfoData);
+		// console.log(JSON.stringify(nominatorsData));
 
 		let final = {};
 		await Validator.deleteMany({});
@@ -62,28 +102,28 @@ eraChange.on("newEra", async () => {
 		await Nominator.deleteMany({});
 
 		await Nominator.insertMany(
-			JSON.parse(JSON.stringify(result.finalNominatorsList))
+			JSON.parse(JSON.stringify(nominatorsData))
 		);
 
 		const savedValidator = await Validator.insertMany(
-			JSON.parse(JSON.stringify(result.filteredValidatorData))
+			JSON.parse(JSON.stringify(validatorsData))
 		);
 
 		const electedInfoData = new EI(
-			JSON.parse(JSON.stringify(result.electedInfo))
+			JSON.parse(JSON.stringify(electedInfo))
 		);
 		const savedElectedInfo = await electedInfoData.save();
 
 		await ValidatorInfo.insertMany(
-			JSON.parse(JSON.stringify(result.filteredValidatorInfos))
+			JSON.parse(JSON.stringify(validatorsInfoData))
 		);
 
 		const intentionData = new Intention({
-			intentions: JSON.parse(JSON.stringify(result.intentions)),
+			intentions: JSON.parse(JSON.stringify(intention)),
 			validatorsAndIntentions: JSON.parse(
-				JSON.stringify(result.validatorsAndIntentions)
+				JSON.stringify(validatorsAndIntentions)
 			),
-			info: JSON.parse(JSON.stringify(result.intentionsTotalInfo))
+			info: JSON.parse(JSON.stringify(intentionsTotalInfo))
 		});
 		const savedIntention = await intentionData.save();
 
@@ -136,7 +176,44 @@ app.use("/", intentions);
 
 app.get("/manualfetch", async (req, res) => {
 	try {
-		const result = await getPolkaData();
+		// console.log("era func start");
+
+		// const result = await getPolkaData();
+		console.log("get previous eraPoints");
+		const previousEraPoints = await eraPointsHistory();
+		// console.log(JSON.stringify(previousEraPoints));
+
+		// get active validators
+		console.log("get validators");
+		const validatorsData = await validatorsIS(previousEraPoints);
+		// console.log(JSON.stringify(validatorsData));
+
+		// get validators Info
+		console.log("get validators Info");
+		const [validatorsInfoData, electedInfo] = await validatorsInfoIS(
+			validatorsData
+		);
+		// console.log("electedInfo");
+		// console.log(JSON.stringify(electedInfo));
+		// console.log("validatorsInfoData");
+		// console.log(JSON.stringify(validatorsInfoData));
+
+		//get intentions
+		console.log("get intentions");
+		const [intention, intentionsTotalInfo, validatorsAndIntentions, intentionsData] = await intentionsIS(
+			previousEraPoints
+		);
+		// console.log("intention");
+		// console.log(JSON.stringify(intention));
+		// console.log("intentionsTotalInfo");
+		// console.log(JSON.stringify(intentionsTotalInfo));
+		// console.log("intentionsData");
+		// console.log(JSON.stringify(intentionsData));
+
+		// get nominatorsData
+		console.log("get nominators");
+		const nominatorsData = await nominatorsIS(validatorsInfoData);
+		// console.log(JSON.stringify(nominatorsData));
 
 		await Validator.deleteMany({});
 		await EI.deleteMany({});
@@ -145,29 +222,29 @@ app.get("/manualfetch", async (req, res) => {
 		await Nominator.deleteMany({});
 
 		const savedValidator = await Validator.insertMany(
-			JSON.parse(JSON.stringify(result.filteredValidatorData))
+			JSON.parse(JSON.stringify(validatorsData))
 		);
 
 		const electedInfoData = new EI(
-			JSON.parse(JSON.stringify(result.electedInfo))
+			JSON.parse(JSON.stringify(electedInfo))
 		);
 		const savedElectedInfo = await electedInfoData.save();
 
 		await ValidatorInfo.insertMany(
-			JSON.parse(JSON.stringify(result.filteredValidatorInfos))
+			JSON.parse(JSON.stringify(validatorsInfoData))
 		);
 
 		const intentionData = new Intention({
-			intentions: JSON.parse(JSON.stringify(result.intentions)),
+			intentions: JSON.parse(JSON.stringify(intention)),
 			validatorsAndIntentions: JSON.parse(
-				JSON.stringify(result.validatorsAndIntentions)
+				JSON.stringify(validatorsAndIntentions)
 			),
-			info: JSON.parse(JSON.stringify(result.intentionsTotalInfo))
+			info: JSON.parse(JSON.stringify(intentionsTotalInfo))
 		});
 		const savedIntention = await intentionData.save();
 
 		await Nominator.insertMany(
-			JSON.parse(JSON.stringify(result.finalNominatorsList))
+			JSON.parse(JSON.stringify(nominatorsData))
 		);
 
 		res.json({ savedValidator, savedElectedInfo, savedIntention });

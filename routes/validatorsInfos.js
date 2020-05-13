@@ -12,15 +12,15 @@ router.get('/validatorinfo/:id', async (req, res) => {
     }
     const currentvalidator = result[0].currentValidator;
     // console.log('yo', currentvalidator);
-    const totalValue = currentvalidator.stakers.total / 10 ** 12;
-    const ownValue = currentvalidator.stakers.own / 10 ** 12;
+    const totalValue = currentvalidator.exposure.total / 10 ** 12;
+    const ownValue = currentvalidator.exposure.own / 10 ** 12;
     const tempObj = {
       currentvalidator: currentvalidator,
-      nominators: currentvalidator.stakers.others,
+      nominators: currentvalidator.exposure.others,
       totalStaked: parseFloat(totalValue.toFixed(3)),
       stakedBySelf: parseFloat(ownValue.toFixed(3)),
       stakedByOther: parseFloat((totalValue - ownValue).toFixed(3)),
-      backers: currentvalidator.stakers.others.length,
+      backers: currentvalidator.exposure.others.length,
       stakingLedgerTotal: (
         currentvalidator.stakingLedger.total /
         10 ** 12
@@ -29,7 +29,7 @@ router.get('/validatorinfo/:id', async (req, res) => {
         currentvalidator.stakingLedger.total /
         10 ** 12
       ).toFixed(3),
-      poolReward: parseFloat(result[0].poolReward),
+      // poolReward: parseFloat(result[0].poolReward),
       commission: result[0].commission
     };
     res.json(tempObj);
