@@ -1,0 +1,112 @@
+{
+	"accountId": "E346pvnjqJrMhP34GGskn4HU9w6WQmrtvtpJA66xDj3Tq68",
+	"controllerId": "E346pvnjqJrMhP34GGskn4HU9w6WQmrtvtpJA66xDj3Tq68",
+	"exposure": {
+		"total": "0x0000000000000000004c6ff7d102e07c",
+		"own": 11509635165660,
+		"others": [
+			{
+				"who": "H9MSs8SnQSbMJiD2oEzfbJg57XtzTSsrvpGVaZyps2kfBNz",
+				"value": 520000000000000
+			},
+			{
+				"who": "GXfecumLiGdcGLRWJjQ7bjrLN9UZ8uXXZ8GPCYYgxfwqpqL",
+				"value": "0x0000000000000000004a8c90160332a0"
+			}
+		]
+	},
+	"nominators": [],
+	"rewardDestination": "Staked",
+	"stakingLedger": {
+		"stash": "E346pvnjqJrMhP34GGskn4HU9w6WQmrtvtpJA66xDj3Tq68",
+		"total": 11509635165660,
+		"active": 11509635165660,
+		"unlocking": [],
+		"claimedRewards": [
+			687,
+			688,
+			689,
+			690,
+			691,
+			692,
+			694,
+			695,
+			696,
+			697,
+			698,
+			699,
+			700,
+			701,
+			702,
+			703,
+			704,
+			705,
+			706,
+			707,
+			708,
+			709,
+			710,
+			711,
+			712,
+			713,
+			714,
+			715,
+			716,
+			717,
+			718,
+			719,
+			720,
+			721,
+			722,
+			723,
+			724,
+			725,
+			726,
+			730,
+			734,
+			735,
+			736,
+			737,
+			738,
+			739,
+			741,
+			742,
+			743,
+			744,
+			745,
+			746,
+			747,
+			748,
+			749,
+			750,
+			751,
+			752,
+			753,
+			754,
+			755,
+			756,
+			757,
+			759,
+			760,
+			770
+		]
+	},
+	"stashId": "E346pvnjqJrMhP34GGskn4HU9w6WQmrtvtpJA66xDj3Tq68",
+	"validatorPrefs": {
+		"commission": 10000000
+	},
+	"nextSessionIds": [
+		"DFcTEcDreBwTiV498NBrGqnLfPVKKteASvxmUMyPQzKMwFy",
+		"HNNKMuZpjBCvJMwEVNFKuf63wc2ihf3bri9YDWjT6d6SmPy",
+		"FiJzB5bVVcSsXVmeBzdAJXx4EickXwVngYn7gF5Gqc5W4Dt",
+		"GUNiUhcjqu7ACb79gdng1Sew2GeiR5A4iciFBmRdeexgvhG",
+		"HP7FjTFU4pcPysMWfT6PX1TZKSoQXAcYcjTE6HFCikaXLu9"
+	],
+	"sessionIds": [
+		"DFcTEcDreBwTiV498NBrGqnLfPVKKteASvxmUMyPQzKMwFy",
+		"HNNKMuZpjBCvJMwEVNFKuf63wc2ihf3bri9YDWjT6d6SmPy",
+		"FiJzB5bVVcSsXVmeBzdAJXx4EickXwVngYn7gF5Gqc5W4Dt",
+		"GUNiUhcjqu7ACb79gdng1Sew2GeiR5A4iciFBmRdeexgvhG",
+		"HP7FjTFU4pcPysMWfT6PX1TZKSoQXAcYcjTE6HFCikaXLu9"
+	]
+}
