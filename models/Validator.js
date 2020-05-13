@@ -7,19 +7,19 @@ const Validator = new mongoose.Schema(
       maxlength: 255,
       required: true
     },
-    stashIdTruncated: {
-      type: String,
-      maxlength: 100,
-      required: true
-    },
-    points: {
+    // stashIdTruncated: {
+    //   type: String,
+    //   maxlength: 100,
+    //   required: true
+    // },
+    eraPoints: {
       type: [Number],
       required: true
     },
-    poolReward: {
-      type: mongoose.Schema.Types.Mixed,
-      required: true
-    },
+    // poolReward: {
+    //   type: mongoose.Schema.Types.Mixed,
+    //   required: true
+    // },
     totalStake: {
       type: Number,
       default: 0
@@ -37,14 +37,14 @@ const Validator = new mongoose.Schema(
       type: Number,
       required: true
     },
-    poolRewardWithCommission: {
-      type: mongoose.Schema.Types.Mixed,
-      required: true
-    },
-    accountIndex: {
-      type: String,
-      required: true
-    }
+    // poolRewardWithCommission: {
+    //   type: mongoose.Schema.Types.Mixed,
+    //   required: true
+    // },
+    // accountIndex: {
+    //   type: String,
+    //   required: true
+    // }
   },
   { timestamps: true }
 );
