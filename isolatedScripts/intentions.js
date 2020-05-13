@@ -14,7 +14,7 @@ const intentions = async previousEraPoints => {
 	const activeValidators = await api.query.session.validators();
 
 	// Fetch intention addresses for current session.
-	const intention = allStashes.filter(
+	const intentions = allStashes.filter(
 		address => !activeValidators.includes(address)
 	);
 
@@ -22,32 +22,46 @@ const intentions = async previousEraPoints => {
 	// get staking info
 	//
 	const intentionsStakingInfo = await Promise.all(
-		intention.map(authorityId => api.derive.staking.account(authorityId))
+		intentions.map(authorityId => api.derive.staking.account(authorityId))
 	);
 
-	let intentionsTotalInfo = {};
-	console.log("previousEraPoints");
-	console.log(JSON.stringify(previousEraPoints));
+	const accountInfo = await Promise.all(
+		intentions.map(addr => api.derive.accounts.info(addr))
+	);
+
+	//
+	//
+	// 
+
+	let intentionsAccountInfo = {};
+	// console.log("previousEraPoints");
+	// console.log(JSON.stringify(previousEraPoints));
 
 	JSON.parse(JSON.stringify(intentionsStakingInfo)).map(info => {
 		const totalStake =
 			Object.keys(info).length > 0 && info.constructor === Object
 				? info.exposure.total.toString() / 10 ** 12
 				: undefined;
-		console.log(totalStake);
-		console.log(previousEraPoints[info.stashId.toString()]);
+		// console.log(totalStake);
+		// console.log(previousEraPoints[info.stashId.toString()]);
+		const name = accountInfo.filter( i => i.accountId.toString() == info.accountId.toString())
+		// console.log(name)
+		// console.log(name[0].identity.display)
 		let eraPoints = {};
 		if (previousEraPoints[info.stashId.toString()] !== undefined) {
 			eraPoints = previousEraPoints[info.stashId.toString()].eraPoints;
 		}
-		return (intentionsTotalInfo[info.stashId.toString()] = {
+		return (intentionsAccountInfo[info.stashId.toString()] = {
+			stashId: info.stashId.toString(),
 			totalStake: totalStake,
 			noOfNominators: info.exposure.others.length,
-			eraPoints: eraPoints
+			commission: info.validatorPrefs.commission,
+			eraPoints: eraPoints,
+			name: name[0].identity.display
 		});
 	});
 
-	return intentionsTotalInfo;
+	return [intentions, intentionsStakingInfo, intentionsAccountInfo];
 };
 
 module.exports = intentions;

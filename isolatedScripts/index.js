@@ -3,6 +3,8 @@ const { hexToString } = require("@polkadot/util");
 const eraPointsHistory = require("./eraPointsHistory");
 const validators = require("./validators")
 const intentions = require("./intentions")
+const validatorsInfo = require("./validatorsInfo")
+const nominators = require("./nominators")
 
 async function main() {
 	try {
@@ -11,13 +13,32 @@ async function main() {
         console.log(JSON.stringify(previousEraPoints));
         
         // get active validators
-        // const validatorsData = await validators(previousEraPoints)
-        // console.log((JSON.stringify(validatorsData)));
+        console.log('get validators')
+        const validatorsData = await validators(previousEraPoints)
+        console.log((JSON.stringify(validatorsData)));
+
+        // get validators Info
+        console.log('get validators Info')
+        const [validatorsInfoData, electedInfo] = await validatorsInfo(validatorsData)
+        console.log('electedInfo')
+        console.log(JSON.stringify(electedInfo))
+        console.log('validatorsInfoData')
+        console.log((JSON.stringify(validatorsInfoData)));
         
         //get intentions
         console.log("get intentions");
-        const intentionsData = await intentions(previousEraPoints)
+        const [intention, intentionsTotalInfo, intentionsData] = await intentions(previousEraPoints)
+        console.log('intention')
+        console.log(JSON.stringify(intention))
+        console.log('intentionsTotalInfo')
+        console.log(JSON.stringify(intentionsTotalInfo))
+        console.log('intentionsData')
         console.log((JSON.stringify(intentionsData)));
+
+        // get nominatorsData
+        console.log('get nominators')
+        const nominatorsData = await nominators(validatorsInfoData)
+        console.log(JSON.stringify(nominatorsData))
 
         
 	} catch (err) {
