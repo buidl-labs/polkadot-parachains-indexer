@@ -77,10 +77,10 @@ const Nominator = new mongoose.Schema(
       type: Number,
       required: true
     },
-    expectedDailyRoi: {
-      type: Number,
-      default: 0,
-    },
+    // expectedDailyRoi: {
+    //   type: Number,
+    //   default: 0,
+    // },
     backers: {
       type: Number,
       required: true
