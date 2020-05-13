@@ -7,7 +7,7 @@ const ValidatorInfo = new mongoose.Schema(
       controllerId: String,
       nominators: [],
       rewardDestination: Number,
-      stakers: {
+      exposure: {
         total: String,
         own: Number,
         others: [
@@ -32,17 +32,28 @@ const ValidatorInfo = new mongoose.Schema(
     },
     stashId: {
       type: String,
-      required: true
+      // required: true
     },
     // stashIdTruncated: {
     //   type: String,
     //   maxlength: 100,
     //   required: true
     // },
-    eraPoints: {
-      type: [Number],
-      required: true
-    },
+    eraPoints: [
+			{
+        eraIndex: { 
+          type: Number, 
+          // required: true 
+        },
+        points: { type: Number, 
+          // required: true 
+        },
+				total: {
+					type: Number,
+					// required: true
+				}
+			}
+		],
     // poolReward: {
     //   type: mongoose.Schema.Types.Mixed,
     //   required: true
@@ -53,16 +64,16 @@ const ValidatorInfo = new mongoose.Schema(
     },
     commission: {
       type: Number,
-      required: true
+      // required: true
     },
     name: {
       type: String,
-      required: true,
+      // required: true,
       maxlength: 255
     },
     noOfNominators: {
       type: Number,
-      required: true
+      // required: true
     },
     // poolRewardWithCommission: {
     //   type: mongoose.Schema.Types.Mixed,

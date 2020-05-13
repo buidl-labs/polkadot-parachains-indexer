@@ -4,7 +4,7 @@ const Nominator = new mongoose.Schema(
   {
     nominatorId: {
       type: String,
-      required: true
+      // required: true
     },
     validators: [
       {
@@ -14,23 +14,23 @@ const Nominator = new mongoose.Schema(
             totalStake: Number,
             stashId: {
               type: String,
-              required: true
+              // required: true
             },
-            stashIdTruncated: {
-              type: String,
-              required: true
-            },
-            poolReward: {
-              type: mongoose.Schema.Types.Mixed,
-              required: true,
-            },
+            // stashIdTruncated: {
+            //   type: String,
+            //   required: true
+            // },
+            // poolReward: {
+            //   type: mongoose.Schema.Types.Mixed,
+            //   required: true,
+            // },
             commission: {
               type: Number,
-              required: true
+              // required: true
             },
             name: {
               type: String,
-              required: true
+              // required: true
             }
           },
           electedInfo: {
@@ -38,7 +38,7 @@ const Nominator = new mongoose.Schema(
             controllerId: String,
             nominators: [],
             rewardDestination: Number,
-            stakers: {
+            exposure: {
               total: String,
               own: Number,
               others: [
@@ -67,15 +67,15 @@ const Nominator = new mongoose.Schema(
     ],
     totalStaked: {
       type: Number,
-      required: true
+      // required: true
     },
     highestStaked: {
       type: Number,
-      required: true
+      // required: true
     },
     othersStaked: {
       type: Number,
-      required: true
+      // required: true
     },
     // expectedDailyRoi: {
     //   type: Number,
@@ -83,7 +83,7 @@ const Nominator = new mongoose.Schema(
     // },
     backers: {
       type: Number,
-      required: true
+      // required: true
     }
   },
   { timestamps: true }

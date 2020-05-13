@@ -181,39 +181,39 @@ app.get("/manualfetch", async (req, res) => {
 		// const result = await getPolkaData();
 		console.log("get previous eraPoints");
 		const previousEraPoints = await eraPointsHistory();
-		// console.log(JSON.stringify(previousEraPoints));
+		console.log(JSON.stringify(previousEraPoints));
 
 		// get active validators
 		console.log("get validators");
 		const validatorsData = await validatorsIS(previousEraPoints);
-		// console.log(JSON.stringify(validatorsData));
+		console.log(JSON.parse(JSON.stringify(validatorsData)));
 
 		// get validators Info
 		console.log("get validators Info");
 		const [validatorsInfoData, electedInfo] = await validatorsInfoIS(
 			validatorsData
 		);
-		// console.log("electedInfo");
-		// console.log(JSON.stringify(electedInfo));
-		// console.log("validatorsInfoData");
-		// console.log(JSON.stringify(validatorsInfoData));
+		console.log("electedInfo");
+		console.log(JSON.stringify(electedInfo));
+		console.log("validatorsInfoData");
+		console.log(JSON.stringify(validatorsInfoData));
 
 		//get intentions
 		console.log("get intentions");
 		const [intention, intentionsTotalInfo, validatorsAndIntentions, intentionsData] = await intentionsIS(
 			previousEraPoints
 		);
-		// console.log("intention");
-		// console.log(JSON.stringify(intention));
-		// console.log("intentionsTotalInfo");
-		// console.log(JSON.stringify(intentionsTotalInfo));
-		// console.log("intentionsData");
-		// console.log(JSON.stringify(intentionsData));
+		console.log("intention");
+		console.log(JSON.stringify(intention));
+		console.log("intentionsTotalInfo");
+		console.log(JSON.stringify(intentionsTotalInfo));
+		console.log("intentionsData");
+		console.log(JSON.stringify(intentionsData));
 
 		// get nominatorsData
 		console.log("get nominators");
 		const nominatorsData = await nominatorsIS(validatorsInfoData);
-		// console.log(JSON.stringify(nominatorsData));
+		console.log(JSON.stringify(nominatorsData));
 
 		await Validator.deleteMany({});
 		await EI.deleteMany({});
