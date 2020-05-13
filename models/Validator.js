@@ -1,52 +1,54 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const Validator = new mongoose.Schema(
-  {
-    stashId: {
-      type: String,
-      maxlength: 255,
-      required: true
-    },
-    // stashIdTruncated: {
-    //   type: String,
-    //   maxlength: 100,
-    //   required: true
-    // },
-    eraPoints: {
-      type: [Number],
-      required: true
-    },
-    // poolReward: {
-    //   type: mongoose.Schema.Types.Mixed,
-    //   required: true
-    // },
-    totalStake: {
-      type: Number,
-      default: 0
-    },
-    commission: {
-      type: Number,
-      required: true
-    },
-    name: {
-      type: String,
-      required: true,
-      maxlength: 255
-    },
-    noOfNominators: {
-      type: Number,
-      required: true
-    },
-    // poolRewardWithCommission: {
-    //   type: mongoose.Schema.Types.Mixed,
-    //   required: true
-    // },
-    // accountIndex: {
-    //   type: String,
-    //   required: true
-    // }
-  },
-  { timestamps: true }
+	{
+		stashId: {
+			type: String,
+			maxlength: 255
+		},
+		// stashIdTruncated: {
+		//   type: String,
+		//   maxlength: 100,
+		//   required: true
+		// },
+		// "eraPoints":[{"eraIndex":782,"points":400,"total":71760},{"eraIndex":783,"points":220,"total":71740},{"eraIndex":784,"points":340,"total":71660}]
+		eraPoints: [
+			{
+				eraIndex: { type: Number},
+				points: { type: Number },
+				total: {
+					type: Number
+				}
+			}
+		],
+		// poolReward: {
+		//   type: mongoose.Schema.Types.Mixed,
+		//   required: true
+		// },
+		totalStake: {
+			type: Number,
+			default: 0
+		},
+		commission: {
+			type: Number,
+		},
+		name: {
+			type: String,
+			maxlength: 255
+		},
+		noOfNominators: {
+			type: Number
+		}
+		// poolRewardWithCommission: {
+		//   type: mongoose.Schema.Types.Mixed,
+		//   required: true
+		// },
+		// accountIndex: {
+		//   type: String,
+		//   required: true
+		// }
+	},
+	{ timestamps: true }
 );
 
-module.exports = mongoose.model('validators', Validator);
+module.exports = mongoose.model("validators", Validator);

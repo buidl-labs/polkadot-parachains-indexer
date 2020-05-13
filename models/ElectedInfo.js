@@ -7,8 +7,8 @@ const ElectedInfo = new mongoose.Schema({
             accountId: String,
             controllerId: String,
             nominators: [],
-            rewardDestination: Number,
-            stakers: {
+            rewardDestination: String,
+            exposure: {
                 total: String,
                 own: Number,
                 others: [

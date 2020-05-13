@@ -8,20 +8,19 @@ const Intention = new mongoose.Schema(
       {
         accountId: {
           type: String,
-          required: true,
+          // required: true,
           maxlength: 255
         },
         controllerId: {
           type: String,
-          required: true,
+          // required: true,
           maxlength: 255
         },
         nominators: [],
         rewardDestination: {
-          type: Number,
-          default: 0
+          type: String
         },
-        stakers: {
+        exposure: {
           total: {
             type: Number,
             default: 0
@@ -38,7 +37,7 @@ const Intention = new mongoose.Schema(
         stakingLedger: {
           stash: {
             type: String,
-            required: true,
+            // required: true,
             maxlength: 255
           },
           total: {
@@ -53,7 +52,7 @@ const Intention = new mongoose.Schema(
         },
         stashId: {
           type: String,
-          required: true,
+          // required: true,
           maxlength: 255
         },
         validatorPrefs: {
