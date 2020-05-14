@@ -6,6 +6,34 @@ const Validator = new mongoose.Schema(
 			type: String,
 			maxlength: 255
 		},
+		info: {
+			accountId: String,
+			controllerId: String,
+			nominators: [],
+			rewardDestination: String,
+			exposure: {
+			  total: String,
+			  own: Number,
+			  others: [
+				{
+				  who: String,
+				  value: Number
+				}
+			  ]
+			},
+			stakingLedger: {
+			  stash: String,
+			  total: Number,
+			  active: Number,
+			  unlocking: []
+			},
+			stashId: String,
+			validatorPrefs: {
+			  commission: Number
+			},
+			nextSessionIds: [String],
+			sessionIds: [String]
+		  },
 		// stashIdTruncated: {
 		//   type: String,
 		//   maxlength: 100,

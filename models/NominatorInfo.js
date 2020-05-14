@@ -8,60 +8,49 @@ const Nominator = new mongoose.Schema(
     },
     validators: [
       {
-        validator: {
-          validator: {
-            points: [Number],
-            totalStake: Number,
-            stashId: {
-              type: String,
-              // required: true
+        currentValidator: {
+          accountId: String,
+          controllerId: String,
+          nominators: [],
+          rewardDestination: String,
+          exposure: {
+            total: String,
+            own: Number,
+            others: [
+              {
+                who: String,
+                value: Number
+              }
+            ]
+          },
+          stakingLedger: {
+            stash: String,
+            total: Number,
+            active: Number,
+            unlocking: []
+          },
+          stashId: String,
+          validatorPrefs: {
+            commission: Number
+          },
+          nextSessionIds: [String],
+          sessionIds: [String]
+        },
+        eraPoints: [
+          {
+            eraIndex: { 
+              type: Number, 
+              // required: true 
             },
-            // stashIdTruncated: {
-            //   type: String,
-            //   required: true
-            // },
-            // poolReward: {
-            //   type: mongoose.Schema.Types.Mixed,
-            //   required: true,
-            // },
-            commission: {
+            points: { type: Number, 
+              // required: true 
+            },
+            total: {
               type: Number,
               // required: true
-            },
-            name: {
-              type: String,
-              // required: true
             }
-          },
-          electedInfo: {
-            accountId: String,
-            controllerId: String,
-            nominators: [],
-            rewardDestination: Number,
-            exposure: {
-              total: String,
-              own: Number,
-              others: [
-                {
-                  who: String,
-                  value: Number
-                }
-              ]
-            },
-            stakingLedger: {
-              stash: String,
-              total: Number,
-              active: Number,
-              unlocking: []
-            },
-            stashId: String,
-            validatorPrefs: {
-              commission: Number
-            },
-            nextSessionIds: [String],
-            sessionIds: [String]
           }
-        },
+        ],
         staked: Number
       }
     ],
