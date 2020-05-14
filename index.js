@@ -91,7 +91,7 @@ eraChange.on("newEra", async () => {
 
 		// get nominatorsData
 		console.log("get nominators");
-		const nominatorsData = await nominatorsIS(validatorsData));
+		const nominatorsData = await nominatorsIS(validatorsData);
 		// console.log(JSON.stringify(nominatorsData));
 
 		let final = {};
