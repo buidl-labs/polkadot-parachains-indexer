@@ -6,33 +6,40 @@ async function main() {
 	const provider = new WsProvider("wss://kusama-rpc.polkadot.io");
 
 	// Create the API and wait until ready
-	const api_ = await ApiPromise.create({ provider });
+	const api = await ApiPromise.create({ provider });
 	// const name1 = await api_.derive.accounts.info('G7eJUS1A7CdcRb2Y3zEDvfAJrM1QtacgG6mPD1RsPTJXxPQ')
 	// console.log(JSON.stringify(name1))
 	// const indexes = await api_.derive.accounts.indexes();
 	// console.log('indexes')
 	// console.log(JSON.stringify(indexes))
-	const electedInfo = await api_.derive.staking.electedInfo();
-	const sessionValidators = await api_.query.session.validators();
-	console.log('electedInfo')
-	console.log(JSON.stringify(electedInfo))
-	console.log('sessionValidators')
-	console.log(JSON.stringify(sessionValidators))
-	sessionValidators.map(validator => {
-		console.log(validator.toString())
-		const temp = JSON.parse(JSON.stringify(electedInfo)).info.find(
-			currentValidator => {
-				console.log(JSON.stringify(currentValidator))
-				console.log(currentValidator.stashId)
-				if (currentValidator.stashId === validator.toString()) {
-					return true;
-				}
-			}
-		);
-		console.log('temp: ' + JSON.stringify(temp))
-		// console.log(JSON.stringify(validatorsData[validator]))
-		// validatorsData[validator].currentValidator = temp
-	});
+	const stakingInfoAddr = await api.derive.staking.account('G7eJUS1A7CdcRb2Y3zEDvfAJrM1QtacgG6mPD1RsPTJXxPQ')
+	console.log(stakingInfoAddr)
+	console.log(JSON.stringify(stakingInfoAddr))
+	const stakingInfoAddr1 = await api.derive.staking.account('ED8SS6LiptDbQZDrHCE1heKjrK6KRUz4xV95PgSba8JUvh3')
+	console.log(stakingInfoAddr1)
+	console.log(JSON.stringify(stakingInfoAddr1))
+
+	// const electedInfo = await api_.derive.staking.electedInfo();
+	// const sessionValidators = await api_.query.session.validators();
+	// console.log('electedInfo')
+	// console.log(JSON.stringify(electedInfo))
+	// console.log('sessionValidators')
+	// console.log(JSON.stringify(sessionValidators))
+	// sessionValidators.map(validator => {
+	// 	console.log(validator.toString())
+	// 	const temp = JSON.parse(JSON.stringify(electedInfo)).info.find(
+	// 		currentValidator => {
+	// 			console.log(JSON.stringify(currentValidator))
+	// 			console.log(currentValidator.stashId)
+	// 			if (currentValidator.stashId === validator.toString()) {
+	// 				return true;
+	// 			}
+	// 		}
+	// 	);
+	// 	console.log('temp: ' + JSON.stringify(temp))
+	// 	// console.log(JSON.stringify(validatorsData[validator]))
+	// 	// validatorsData[validator].currentValidator = temp
+	// });
 	
 	}
 

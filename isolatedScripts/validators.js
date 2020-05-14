@@ -39,6 +39,7 @@ const validators = async (previousEraPoints) => {
 		}
 		return validatorsTotalInfo[info.stashId.toString()] = {
 			stashId: info.stashId.toString(),
+			info: info,
 			totalStake: totalStake,
 			noOfNominators: info.exposure.others.length,
 			commission: info.validatorPrefs.commission,

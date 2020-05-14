@@ -1,6 +1,6 @@
 const { ApiPromise, WsProvider } = require("@polkadot/api");
 const { hexToString } = require("@polkadot/util");
-const nominators = async (validatorsInfoData) => {
+const nominators = async (validatorsData) => {
 	// Initialise the provider to connect to the local node
 	const provider = new WsProvider("wss://kusama-rpc.polkadot.io");
 
@@ -10,8 +10,9 @@ const nominators = async (validatorsInfoData) => {
 
 	//Store all the unique nominators
 	const nominators = [];
-	Object.keys(validatorsInfoData).forEach(data => {
-		validatorsInfoData[data].currentValidator.exposure.others.forEach(nom => {
+	Object.keys(validatorsData).forEach(data => {
+		// console.log(JSON.stringify(validatorsData[data]))
+		validatorsData[data].info.exposure.others.forEach(nom => {
 			const tempObj = {
 				who: nom.who,
 				value: nom.value
@@ -26,11 +27,12 @@ const nominators = async (validatorsInfoData) => {
 	const finalNominatorsList = [];
 	nominators.map(nom => {
 		let temp = [];
-		Object.keys(validatorsInfoData).forEach(data => {
-			validatorsInfoData[data].currentValidator.exposure.others.forEach(curr => {
+		Object.keys(validatorsData).forEach(data => {
+			validatorsData[data].info.exposure.others.forEach(curr => {
 				if (nom.who.toString() === curr.who.toString()) {
 					temp.push({
-						validator: data,
+						info: validatorsData[data].info,
+						eraPoints: validatorsData[data].eraPoints,
 						staked: curr.value / 10 ** 12
 					});
 				}

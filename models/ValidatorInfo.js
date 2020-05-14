@@ -6,7 +6,7 @@ const ValidatorInfo = new mongoose.Schema(
       accountId: String,
       controllerId: String,
       nominators: [],
-      rewardDestination: Number,
+      rewardDestination: String,
       exposure: {
         total: String,
         own: Number,
