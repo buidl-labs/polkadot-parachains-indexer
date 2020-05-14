@@ -11,6 +11,9 @@
     "lint": "lint-staged",
     "pre-commit": "./hooks/pre-commit"
   },
+  "engines": {
+    "node": "14.2.0"
+  },
   "author": "",
   "license": "ISC",
   "dependencies": {
