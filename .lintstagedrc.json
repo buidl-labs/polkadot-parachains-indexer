@@ -1,8 +1,0 @@
-{
-	"**/*.+(js|jsx|css|less|scss|ts|tsx|md)": [
-		"eslint --fix",
-		"prettier --write",
-		"jest --findRelatedTests"
-	],
-	"**/*.+(json)": ["prettier --write"]
-}
