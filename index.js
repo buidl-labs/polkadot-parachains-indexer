@@ -9,6 +9,7 @@ const config = require("config");
 const configDB = config.get("DB");
 const configSentryDns = config.get("SENTRY_DNS");
 const EI = require("./models/ElectedInfo");
+const RiskScore = require("./models/RiskScore");
 const Intention = require("./models/Intention");
 const ValidatorInfo = require("./models/ValidatorInfo");
 const Nominator = require("./models/NominatorInfo");
@@ -20,10 +21,12 @@ const validatorsIS = require("./isolatedScripts/validators")
 const intentionsIS = require("./isolatedScripts/intentions")
 const validatorsInfoIS = require("./isolatedScripts/validatorsInfo")
 const nominatorsIS = require("./isolatedScripts/nominators")
+const riskScoreCalculator = require("./isolatedScripts/riskScore")
 // const getPolkaData = require("./utils/getPolkaData");
 const validatorsInfos = require("./routes/validatorsInfos");
 const nominatorInfos = require("./routes/nominatorinfos");
 const intentions = require("./routes/intentions");
+const riskscore = require("./routes/riskscore");
 
 const _ = require("lodash");
 
@@ -89,6 +92,12 @@ eraChange.on("newEra", async () => {
 		// console.log("intentionsData");
 		// console.log(JSON.stringify(intentionsData));
 
+		// get risk score
+		console.log("get risk score");
+		const riskScoreData = await riskScoreCalculator(validatorsData);
+		// console.log("riskScoreData");
+		// console.log(JSON.stringify(riskScoreData));
+
 		// get nominatorsData
 		console.log("get nominators");
 		const nominatorsData = await nominatorsIS(validatorsData);
@@ -97,6 +106,7 @@ eraChange.on("newEra", async () => {
 		let final = {};
 		await Validator.deleteMany({});
 		await EI.deleteMany({});
+		await RiskScore.deleteMany({});
 		await Intention.deleteMany({});
 		await ValidatorInfo.deleteMany({});
 		await Nominator.deleteMany({});
@@ -112,6 +122,10 @@ eraChange.on("newEra", async () => {
 
 		await ValidatorInfo.insertMany(
 			JSON.parse(JSON.stringify(Object.values(validatorsInfoData)))
+		);
+
+		await RiskScore.insertMany(
+			JSON.parse(JSON.stringify(riskScoreData))
 		);
 
 		const intentionData = new Intention({
@@ -152,7 +166,7 @@ eraChange.on("newEra", async () => {
 			Sentry.captureMessage(`Era changed at: ${new Date()}`);
 			eraChange.emit("newEra");
 		}
-		console.log(`eraProgress ${parseInt(eraProgress)}`);
+		// console.log(`eraProgress ${parseInt(eraProgress)}`);
 	});
 })();
 
@@ -175,6 +189,7 @@ app.get("/", (req, res) => {
 app.use("/", validatorsInfos);
 app.use("/", nominatorInfos);
 app.use("/", intentions);
+app.use("/", riskscore)
 
 app.get("/manualfetch", async (req, res) => {
 	try {
@@ -215,6 +230,12 @@ app.get("/manualfetch", async (req, res) => {
 		// console.log("intentionsData");
 		// console.log(JSON.stringify(intentionsData));
 
+		// get risk score
+		console.log("get risk score");
+		const riskScoreData = await riskScoreCalculator(validatorsData);
+		// console.log("riskScoreData");
+		// console.log(JSON.stringify(riskScoreData));
+
 		// get nominatorsData
 		console.log("get nominators");
 		const nominatorsData = await nominatorsIS(validatorsData);
@@ -222,6 +243,7 @@ app.get("/manualfetch", async (req, res) => {
 
 		await Validator.deleteMany({});
 		await EI.deleteMany({});
+		await RiskScore.deleteMany({});
 		await Intention.deleteMany({});
 		await ValidatorInfo.deleteMany({});
 		await Nominator.deleteMany({});
@@ -238,6 +260,10 @@ app.get("/manualfetch", async (req, res) => {
 		await ValidatorInfo.insertMany(
 			JSON.parse(JSON.stringify(Object.values(validatorsInfoData)))
 		);
+		
+		await RiskScore.insertMany(
+			JSON.parse(JSON.stringify(riskScoreData))
+		);
 
 		const intentionData = new Intention({
 			intentions: JSON.parse(JSON.stringify(intention)),
@@ -251,6 +277,7 @@ app.get("/manualfetch", async (req, res) => {
 		const savedNominator = await Nominator.insertMany(
 			JSON.parse(JSON.stringify(nominatorsData))
 		);
+
 		// console.log('savedNominator')
 		// console.log(savedNominator)
 
