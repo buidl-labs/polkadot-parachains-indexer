@@ -101,12 +101,8 @@ eraChange.on("newEra", async () => {
 		await ValidatorInfo.deleteMany({});
 		await Nominator.deleteMany({});
 
-		await Nominator.insertMany(
-			JSON.parse(JSON.stringify(nominatorsData))
-		);
-
 		const savedValidator = await Validator.insertMany(
-			JSON.parse(JSON.stringify(validatorsData))
+			JSON.parse(JSON.stringify(Object.values(validatorsData)))
 		);
 
 		const electedInfoData = new EI(
@@ -115,7 +111,7 @@ eraChange.on("newEra", async () => {
 		const savedElectedInfo = await electedInfoData.save();
 
 		await ValidatorInfo.insertMany(
-			JSON.parse(JSON.stringify(validatorsInfoData))
+			JSON.parse(JSON.stringify(Object.values(validatorsInfoData)))
 		);
 
 		const intentionData = new Intention({
@@ -126,6 +122,12 @@ eraChange.on("newEra", async () => {
 			info: JSON.parse(JSON.stringify(intentionsTotalInfo))
 		});
 		const savedIntention = await intentionData.save();
+
+		const savedNominator = await Nominator.insertMany(
+			JSON.parse(JSON.stringify(nominatorsData))
+		);
+		// console.log('savedNominator')
+		// console.log(savedNominator)
 
 		final.filteredValidatorsList = savedValidator;
 		final.electedInfo = savedElectedInfo;
@@ -146,7 +148,7 @@ eraChange.on("newEra", async () => {
 		// console.log(eraLength,eraProgress,sessionLength,sessionProgress)
 		//TODO: handle edge case where eraProgress equals 1 withins few minutes/seconds
 		// twice thus leading to inconsistency in the data
-		if (parseInt(eraProgress) === 63) {
+		if (parseInt(eraProgress) === 1720) {
 			Sentry.captureMessage(`Era changed at: ${new Date()}`);
 			eraChange.emit("newEra");
 		}

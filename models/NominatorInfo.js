@@ -8,7 +8,7 @@ const Nominator = new mongoose.Schema(
     },
     validators: [
       {
-        currentValidator: {
+        info: {
           accountId: String,
           controllerId: String,
           nominators: [],
