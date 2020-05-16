@@ -1,6 +1,7 @@
 const app = require("express")();
 const mongoose = require("mongoose");
 const socket_io = require("socket.io");
+socket_io.origins(['*:*']);
 const Validator = require("./models/Validator.js");
 const EventEmitter = require("events");
 const { ApiPromise, WsProvider } = require("@polkadot/api");
@@ -326,6 +327,6 @@ io.attach(server, {
 	pingTimeout: 300000 * 2,
 	upgradeTimeout: 300000
 });
-io.listen(server, {log:false, origins:'*:*'});
+io.listen(server);
 
 server.setTimeout(300000 * 2); // after 10 minutes
