@@ -162,7 +162,7 @@ eraChange.on("newEra", async () => {
 		// console.log(eraLength,eraProgress,sessionLength,sessionProgress)
 		//TODO: handle edge case where eraProgress equals 1 withins few minutes/seconds
 		// twice thus leading to inconsistency in the data
-		if (parseInt(eraProgress) === 63) {
+		if (parseInt(eraProgress) === 6300) {
 			Sentry.captureMessage(`Era changed at: ${new Date()}`);
 			eraChange.emit("newEra");
 		}
