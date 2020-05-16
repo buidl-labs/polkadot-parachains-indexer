@@ -281,7 +281,7 @@ app.get("/manualfetch", async (req, res) => {
 		// console.log('savedNominator')
 		// console.log(savedNominator)
 
-		res.json({ savedNominator });
+		res.json({ });
 	} catch (err) {
 		console.log("err", err);
 		res.status(400).json({ err: err, message: "error bro" });

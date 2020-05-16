@@ -1,12 +1,18 @@
-const router = require('express').Router();
-const RiskScore = require('../models/RiskScore');
+const router = require("express").Router();
+const RiskScore = require("../models/RiskScore");
 
-router.get('/riskscore', async (req, res) => {
+router.get("/riskscore", async (req, res) => {
   try {
-    const result = await RiskScore.find();
-    res.json({ riskscore: result[0].riskscore, info: result[0].info });
+    const result = await RiskScore.find().lean();
+    // If no nominator found
+    if (!(result.length > 0)) {
+      res.json([]);
+      return;
+    }
+
+    res.json(result);
   } catch (err) {
-    res.status(400).send({ err: 'Error Bro', err: err });
+    res.status(400).send({ error: "Error", err });
   }
 });
 
