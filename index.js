@@ -326,6 +326,6 @@ io.attach(server, {
 	pingTimeout: 300000 * 2,
 	upgradeTimeout: 300000
 });
-io.listen(server);
+io.listen(server, {log:false, origins:'*:*'});
 
 server.setTimeout(300000 * 2); // after 10 minutes
