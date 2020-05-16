@@ -1,7 +1,6 @@
 const app = require("express")();
 const mongoose = require("mongoose");
 const socket_io = require("socket.io");
-socket_io.origins(['*:*']);
 const Validator = require("./models/Validator.js");
 const EventEmitter = require("events");
 const { ApiPromise, WsProvider } = require("@polkadot/api");
@@ -46,6 +45,7 @@ Sentry.init({ dsn: configSentryDns });
 require("./startup/startup")(app);
 
 const io = socket_io();
+io.origins(['*:*']);
 
 mongoose
 	.connect(configDB, { useNewUrlParser: true, useUnifiedTopology: true })
