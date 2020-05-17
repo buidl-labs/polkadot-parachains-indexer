@@ -67,7 +67,9 @@ eraChange.on("newEra", async () => {
 		console.log("get previous eraPoints");
 		const [previousEraPoints, last4Eras] = await eraPointsHistory(wsProvider);
 		// console.log(JSON.stringify(previousEraPoints));
-		console.log(JSON.stringify(last4Eras))
+		// console.log(JSON.stringify(last4Eras))
+		console.log("get rewards history")
+		const rewards = await returnsHistory(last4Eras, wsProvider)
 
 		// get active validators
 		console.log("get validators");
@@ -86,7 +88,7 @@ eraChange.on("newEra", async () => {
 		// get validators Info
 		console.log("get validators Info");
 		const [validatorsInfoData, electedInfo] = await validatorsInfoIS(
-			validatorsData , wsProvider
+			validatorsData , rewards, wsProvider
 		);
 		console.log("delete previous validators Info");
 		await ValidatorInfo.deleteMany({});
@@ -138,7 +140,7 @@ eraChange.on("newEra", async () => {
 
 		// get nominatorsData
 		console.log("get nominators");
-		const nominatorsData = await nominatorsIS(validatorsData, wsProvider);
+		const nominatorsData = await nominatorsIS(validatorsData, rewards, wsProvider);
 		console.log("delete nominators");
 		await Nominator.deleteMany({});
 		console.log("insert nominators");
