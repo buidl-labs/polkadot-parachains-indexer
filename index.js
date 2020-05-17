@@ -212,7 +212,7 @@ app.get("/manualfetch", async (req, res) => {
 		// console.log(JSON.stringify(last4Eras))
 		
 		console.log("get rewards history")
-		const [validatorsPoolReward, nominatorsROI] = await returnsHistory(last4Eras, wsProvider)
+		const rewards = await returnsHistory(last4Eras, wsProvider)
 
 		// get active validators
 		console.log("get validators");
@@ -231,7 +231,7 @@ app.get("/manualfetch", async (req, res) => {
 		// get validators Info
 		console.log("get validators Info");
 		const [validatorsInfoData, electedInfo] = await validatorsInfoIS(
-			validatorsData, wsProvider
+			validatorsData, rewards, wsProvider
 		);
 		console.log("delete previous validators Info");
 		await ValidatorInfo.deleteMany({});
@@ -242,7 +242,7 @@ app.get("/manualfetch", async (req, res) => {
 		// console.log("electedInfo");
 		// console.log(JSON.stringify(electedInfo));
 		// console.log("validatorsInfoData");
-		// console.log(JSON.stringify(validatorsInfoData));
+		console.log(JSON.stringify(validatorsInfoData));
 
 		//get intentions
 		console.log("get intentions");
@@ -281,7 +281,7 @@ app.get("/manualfetch", async (req, res) => {
 
 		// get nominatorsData
 		console.log("get nominators");
-		const nominatorsData = await nominatorsIS(validatorsData, wsProvider);
+		const nominatorsData = await nominatorsIS(validatorsData, rewards, wsProvider);
 		console.log("delete nominators");
 		await Nominator.deleteMany({});
 		console.log("insert nominators");

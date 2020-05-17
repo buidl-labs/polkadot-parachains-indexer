@@ -10,7 +10,7 @@ const rewardsHistory = async (last4Eras, provider) => {
     const data = JSON.parse(JSON.stringify(last4Eras)) 
     let valPrefs = {}
     let valExposure = {}
-    let returns = {}
+    let rewards = []
     // console.log(JSON.parse(JSON.stringify(last4Eras)))
     for (let i = 0; i < data.length; i++) {
         const element = data[i];
@@ -21,9 +21,9 @@ const rewardsHistory = async (last4Eras, provider) => {
             Object.keys(data[i].erasRewardPoints.individual).map(x => api.query.staking.erasValidatorPrefs(data[i].eraIndex , x.toString()))
         );
         // console.log(JSON.stringify(Object.keys(data[i].erasRewardPoints.individual)))
-        console.log(JSON.stringify(Object.keys(data[i].erasRewardPoints.individual)))
-        console.log(JSON.stringify(valExposure[data[i].eraIndex]))
-        console.log(JSON.stringify(valPrefs[data[i].eraIndex]))
+        // console.log(JSON.stringify(Object.keys(data[i].erasRewardPoints.individual)))
+        // console.log(JSON.stringify(valExposure[data[i].eraIndex]))
+        // console.log(JSON.stringify(valPrefs[data[i].eraIndex]))
 
         Object.keys(data[i].erasRewardPoints.individual).forEach((y, index) => {
             //
@@ -47,16 +47,20 @@ const rewardsHistory = async (last4Eras, provider) => {
             const nominatorsRewards = (valExposure[data[i].eraIndex][index].others).map(x => {
                 const nomId = x.who
                 const nomReward = (data[i].erasRewardPoints.individual[y] / data[i].erasRewardPoints.total * data[i].rewards - parseInt(valPrefs[data[i].eraIndex][index].commission)) * parseInt(x.value) / parseInt(valExposure[data[i].eraIndex][index].total)
-                return { nomId: nomId, nomReward: nomReward }
+                return { 'nomId': nomId, 'nomReward': nomReward , 'nomStake': parseInt(x.value)}
             })
-            console.log(JSON.stringify(nominatorsRewards))
+            // console.log(JSON.stringify(nominatorsRewards))
+            rewards.push({
+                'poolReward': poolReward,
+                'validatorReward': validatorReward,
+                'stashId': y,
+                'eraIndex': data[i].eraIndex,
+                'nominatorsRewards': nominatorsRewards
+            })
         })
     }
-    
-    
-
 	
-	return ['validatorRewards', 'nominatorRewards']
+	return rewards
 	
 }
 

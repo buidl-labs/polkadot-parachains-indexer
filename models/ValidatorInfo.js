@@ -71,6 +71,26 @@ const ValidatorInfo = new mongoose.Schema(
       // required: true,
       maxlength: 255
     },
+    rewards: [
+      {
+        poolReward: Number,
+        validatorReward: Number,
+        stashId: String,
+        eraIndex: Number,
+        nominatorsRewards: [
+          {
+            nomId: String,
+            nomReward: Number,
+            nomStake: Number
+          },
+          {
+            nomId: String,
+            nomReward: Number,
+            nomStake: Number
+          }
+        ]
+      }
+    ],
     noOfNominators: {
       type: Number,
       // required: true
