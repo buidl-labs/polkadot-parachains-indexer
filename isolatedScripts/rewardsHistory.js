@@ -26,15 +26,23 @@ const rewardsHistory = async (last4Eras, provider) => {
         console.log(JSON.stringify(valPrefs[data[i].eraIndex]))
 
         Object.keys(data[i].erasRewardPoints.individual).forEach((y, index) => {
+            //
             // poolReward = eraPoints/totalErapoints * totalReward
             // validatorReward = (eraPoints/totalErapoints * totalReward) * ownStake/totalStake + commission
-            console.log((data[i].erasRewardPoints.individual[y]))
-            console.log(data[i].erasRewardPoints.total)
-            console.log(data[i].rewards)
+            // 
+            
+            // poolreward calculation
+            // console.log((data[i].erasRewardPoints.individual[y]))
+            // console.log(data[i].erasRewardPoints.total)
+            // console.log(data[i].rewards)
             
             const poolReward = data[i].erasRewardPoints.individual[y] / data[i].erasRewardPoints.total * data[i].rewards;
-            console.log(poolReward)
-            // const validatorReward = (eraPoints/totalErapoints * totalReward) * ownStake/totalStake + commission
+            // console.log(poolReward)
+            
+            // validator reward calculation
+            const validatorReward = (data[i].erasRewardPoints.individual[y] / data[i].erasRewardPoints.total * data[i].rewards * parseInt(valExposure[data[i].eraIndex][index].own) / parseInt(valExposure[data[i].eraIndex][index].total)) + parseInt(valPrefs[data[i].eraIndex][index].commission)
+            // console.log(validatorReward)
+
         })
 
 
