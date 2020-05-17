@@ -1,9 +1,7 @@
-const { ApiPromise, WsProvider } = require("@polkadot/api");
-const riskScoreCalculator = async (validatorsData) => {
-    const wsProvider = new WsProvider("wss://kusama-rpc.polkadot.io");
-	const api = await ApiPromise.create({
-		provider: wsProvider
-	});
+const { ApiPromise } = require("@polkadot/api");
+const riskScoreCalculator = async (validatorsData, provider) => {
+    // const wsProvider = new WsProvider("wss://kusama-rpc.polkadot.io");
+	const api = await ApiPromise.create({ provider });
 	await api.isReady;
 
     // const accountsDetails = await fetch(

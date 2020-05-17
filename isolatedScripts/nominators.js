@@ -1,8 +1,8 @@
-const { ApiPromise, WsProvider } = require("@polkadot/api");
-const { hexToString } = require("@polkadot/util");
-const nominators = async (validatorsData) => {
+const { ApiPromise } = require("@polkadot/api");
+// const { hexToString } = require("@polkadot/util");
+const nominators = async (validatorsData, provider) => {
 	// Initialise the provider to connect to the local node
-	const provider = new WsProvider("wss://kusama-rpc.polkadot.io");
+	// const provider = new WsProvider("wss://kusama-rpc.polkadot.io");
 
 	// Create the API and wait until ready
 
@@ -75,7 +75,6 @@ const nominators = async (validatorsData) => {
 	// console.log(JSON.stringify(validatorsData))
 
 	// Fetch active validator for current session.
-	
 
 	return finalNominatorsList;
 };

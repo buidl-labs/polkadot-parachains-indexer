@@ -1,8 +1,8 @@
-const { ApiPromise, WsProvider } = require("@polkadot/api");
-const { hexToString } = require("@polkadot/util");
-const validators = async (previousEraPoints) => {
+const { ApiPromise } = require("@polkadot/api");
+// const { hexToString } = require("@polkadot/util");
+const validators = async (previousEraPoints, provider) => {
 	// Initialise the provider to connect to the local node
-	const provider = new WsProvider("wss://kusama-rpc.polkadot.io");
+	// const provider = new WsProvider("wss://kusama-rpc.polkadot.io");
 
 	// Create the API and wait until ready
 
@@ -47,7 +47,7 @@ const validators = async (previousEraPoints) => {
 			name: name[0].identity.display
 		}
 	});
-
+	// await api.disconnect();
 	return validatorsTotalInfo;
 };
 

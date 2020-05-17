@@ -30,6 +30,8 @@ const riskscore = require("./routes/riskscore");
 
 const _ = require("lodash");
 
+const wsProvider = new WsProvider("wss://kusama-rpc.polkadot.io");
+
 if (!config.get("DB")) {
 	throw new Error("Database url is required!");
 }
@@ -59,22 +61,36 @@ mongoose
  */
 eraChange.on("newEra", async () => {
 	try {
-		// console.log("era func start");
+		console.log("era func start");
 
-		// const result = await getPolkaData();
 		console.log("get previous eraPoints");
-		const previousEraPoints = await eraPointsHistory();
+		const previousEraPoints = await eraPointsHistory(wsProvider);
 		// console.log(JSON.stringify(previousEraPoints));
 
 		// get active validators
 		console.log("get validators");
-		const validatorsData = await validatorsIS(previousEraPoints);
-		// console.log(JSON.stringify(validatorsData));
+		const validatorsData = await validatorsIS(previousEraPoints, wsProvider);
+		console.log("delete previous validators");
+		await Validator.deleteMany({});
+		console.log('insert new validators')
+		await Validator.insertMany(
+			JSON.parse(JSON.stringify(Object.values(validatorsData)))
+		);
+		// console.log(JSON.parse(JSON.stringify(validatorsData)));
+		// console.log(Object.values(validatorsData))
+		// const validatorsDataObject = {...(Object.values(validatorsData))}
+		// console.log(JSON.stringify(validatorsDataObject))
 
 		// get validators Info
 		console.log("get validators Info");
 		const [validatorsInfoData, electedInfo] = await validatorsInfoIS(
-			validatorsData
+			validatorsData, wsProvider
+		);
+		console.log("delete previous validators Info");
+		await ValidatorInfo.deleteMany({});
+		console.log("get validators Info");
+		await ValidatorInfo.insertMany(
+			JSON.parse(JSON.stringify(Object.values(validatorsInfoData)))
 		);
 		// console.log("electedInfo");
 		// console.log(JSON.stringify(electedInfo));
@@ -84,8 +100,19 @@ eraChange.on("newEra", async () => {
 		//get intentions
 		console.log("get intentions");
 		const [intention, intentionsTotalInfo, validatorsAndIntentions, intentionsData] = await intentionsIS(
-			previousEraPoints
+			previousEraPoints, wsProvider
 		);
+		console.log("delete intentions");
+		await Intention.deleteMany({});
+		console.log("insert intentions");
+		const intentionData = new Intention({
+			intentions: JSON.parse(JSON.stringify(intention)),
+			validatorsAndIntentions: JSON.parse(
+				JSON.stringify(validatorsAndIntentions)
+			),
+			info: JSON.parse(JSON.stringify(intentionsTotalInfo))
+		});
+		const savedIntention = await intentionData.save();
 		// console.log("intention");
 		// console.log(JSON.stringify(intention));
 		// console.log("intentionsTotalInfo");
@@ -95,55 +122,31 @@ eraChange.on("newEra", async () => {
 
 		// get risk score
 		console.log("get risk score");
-		const riskScoreData = await riskScoreCalculator(validatorsData);
+		const riskScoreData = await riskScoreCalculator(validatorsData, wsProvider);
+		console.log("delete risk score");
+		await RiskScore.deleteMany({});
+		console.log("insert risk score");
+		await RiskScore.insertMany(
+			JSON.parse(JSON.stringify(riskScoreData))
+		);
 		// console.log("riskScoreData");
 		// console.log(JSON.stringify(riskScoreData));
 
 		// get nominatorsData
 		console.log("get nominators");
-		const nominatorsData = await nominatorsIS(validatorsData);
-		// console.log(JSON.stringify(nominatorsData));
-
-		let final = {};
-		await Validator.deleteMany({});
-		await EI.deleteMany({});
-		await RiskScore.deleteMany({});
-		await Intention.deleteMany({});
-		await ValidatorInfo.deleteMany({});
+		const nominatorsData = await nominatorsIS(validatorsData, wsProvider);
+		console.log("delete nominators");
 		await Nominator.deleteMany({});
-
-		const savedValidator = await Validator.insertMany(
-			JSON.parse(JSON.stringify(Object.values(validatorsData)))
-		);
-
-		const electedInfoData = new EI(
-			JSON.parse(JSON.stringify(electedInfo))
-		);
-		const savedElectedInfo = await electedInfoData.save();
-
-		await ValidatorInfo.insertMany(
-			JSON.parse(JSON.stringify(Object.values(validatorsInfoData)))
-		);
-
-		await RiskScore.insertMany(
-			JSON.parse(JSON.stringify(riskScoreData))
-		);
-
-		const intentionData = new Intention({
-			intentions: JSON.parse(JSON.stringify(intention)),
-			validatorsAndIntentions: JSON.parse(
-				JSON.stringify(validatorsAndIntentions)
-			),
-			info: JSON.parse(JSON.stringify(intentionsTotalInfo))
-		});
-		const savedIntention = await intentionData.save();
-
+		console.log("insert nominators");
 		const savedNominator = await Nominator.insertMany(
 			JSON.parse(JSON.stringify(nominatorsData))
 		);
+		// console.log(JSON.stringify(nominatorsData));
 		// console.log('savedNominator')
 		// console.log(savedNominator)
 
+		
+		let final = {};
 		final.filteredValidatorsList = savedValidator;
 		final.electedInfo = savedElectedInfo;
 		final.intentionsData = savedIntention;
@@ -155,7 +158,7 @@ eraChange.on("newEra", async () => {
 });
 
 (async () => {
-	const wsProvider = new WsProvider("wss://kusama-rpc.polkadot.io");
+	// const wsProvider = new WsProvider("wss://kusama-rpc.polkadot.io");
 	const api = await ApiPromise.create({ provider: wsProvider });
 
 	await api.derive.session.progress(header => {
@@ -163,11 +166,11 @@ eraChange.on("newEra", async () => {
 		// console.log(eraLength,eraProgress,sessionLength,sessionProgress)
 		//TODO: handle edge case where eraProgress equals 1 withins few minutes/seconds
 		// twice thus leading to inconsistency in the data
-		if (parseInt(eraProgress) === 6300) {
+		if (parseInt(eraProgress) === (3150 || 3300 || 10 || 300 || 600 || 900 || 1200 || 1500 || 1800 || 2100)) {
 			Sentry.captureMessage(`Era changed at: ${new Date()}`);
 			eraChange.emit("newEra");
 		}
-		// console.log(`eraProgress ${parseInt(eraProgress)}`);
+		console.log(`eraProgress ${parseInt(eraProgress)}`);
 	});
 })();
 
@@ -198,12 +201,18 @@ app.get("/manualfetch", async (req, res) => {
 
 		// const result = await getPolkaData();
 		console.log("get previous eraPoints");
-		const previousEraPoints = await eraPointsHistory();
+		const previousEraPoints = await eraPointsHistory(wsProvider);
 		// console.log(JSON.stringify(previousEraPoints));
 
 		// get active validators
 		console.log("get validators");
-		const validatorsData = await validatorsIS(previousEraPoints);
+		const validatorsData = await validatorsIS(previousEraPoints, wsProvider);
+		console.log("delete previous validators");
+		await Validator.deleteMany({});
+		console.log('insert new validators')
+		await Validator.insertMany(
+			JSON.parse(JSON.stringify(Object.values(validatorsData)))
+		);
 		// console.log(JSON.parse(JSON.stringify(validatorsData)));
 		// console.log(Object.values(validatorsData))
 		// const validatorsDataObject = {...(Object.values(validatorsData))}
@@ -212,7 +221,13 @@ app.get("/manualfetch", async (req, res) => {
 		// get validators Info
 		console.log("get validators Info");
 		const [validatorsInfoData, electedInfo] = await validatorsInfoIS(
-			validatorsData
+			validatorsData, wsProvider
+		);
+		console.log("delete previous validators Info");
+		await ValidatorInfo.deleteMany({});
+		console.log("get validators Info");
+		await ValidatorInfo.insertMany(
+			JSON.parse(JSON.stringify(Object.values(validatorsInfoData)))
 		);
 		// console.log("electedInfo");
 		// console.log(JSON.stringify(electedInfo));
@@ -222,8 +237,19 @@ app.get("/manualfetch", async (req, res) => {
 		//get intentions
 		console.log("get intentions");
 		const [intention, intentionsTotalInfo, validatorsAndIntentions, intentionsData] = await intentionsIS(
-			previousEraPoints
+			previousEraPoints, wsProvider
 		);
+		console.log("delete intentions");
+		await Intention.deleteMany({});
+		console.log("insert intentions");
+		const intentionData = new Intention({
+			intentions: JSON.parse(JSON.stringify(intention)),
+			validatorsAndIntentions: JSON.parse(
+				JSON.stringify(validatorsAndIntentions)
+			),
+			info: JSON.parse(JSON.stringify(intentionsTotalInfo))
+		});
+		const savedIntention = await intentionData.save();
 		// console.log("intention");
 		// console.log(JSON.stringify(intention));
 		// console.log("intentionsTotalInfo");
@@ -233,52 +259,26 @@ app.get("/manualfetch", async (req, res) => {
 
 		// get risk score
 		console.log("get risk score");
-		const riskScoreData = await riskScoreCalculator(validatorsData);
+		const riskScoreData = await riskScoreCalculator(validatorsData, wsProvider);
+		console.log("delete risk score");
+		await RiskScore.deleteMany({});
+		console.log("insert risk score");
+		await RiskScore.insertMany(
+			JSON.parse(JSON.stringify(riskScoreData))
+		);
 		// console.log("riskScoreData");
 		// console.log(JSON.stringify(riskScoreData));
 
 		// get nominatorsData
 		console.log("get nominators");
-		const nominatorsData = await nominatorsIS(validatorsData);
-		// console.log(JSON.stringify(nominatorsData));
-
-		await Validator.deleteMany({});
-		await EI.deleteMany({});
-		await RiskScore.deleteMany({});
-		await Intention.deleteMany({});
-		await ValidatorInfo.deleteMany({});
+		const nominatorsData = await nominatorsIS(validatorsData, wsProvider);
+		console.log("delete nominators");
 		await Nominator.deleteMany({});
-
-		const savedValidator = await Validator.insertMany(
-			JSON.parse(JSON.stringify(Object.values(validatorsData)))
-		);
-
-		const electedInfoData = new EI(
-			JSON.parse(JSON.stringify(electedInfo))
-		);
-		const savedElectedInfo = await electedInfoData.save();
-
-		await ValidatorInfo.insertMany(
-			JSON.parse(JSON.stringify(Object.values(validatorsInfoData)))
-		);
-		
-		await RiskScore.insertMany(
-			JSON.parse(JSON.stringify(riskScoreData))
-		);
-
-		const intentionData = new Intention({
-			intentions: JSON.parse(JSON.stringify(intention)),
-			validatorsAndIntentions: JSON.parse(
-				JSON.stringify(validatorsAndIntentions)
-			),
-			info: JSON.parse(JSON.stringify(intentionsTotalInfo))
-		});
-		const savedIntention = await intentionData.save();
-
+		console.log("insert nominators");
 		const savedNominator = await Nominator.insertMany(
 			JSON.parse(JSON.stringify(nominatorsData))
 		);
-
+		// console.log(JSON.stringify(nominatorsData));
 		// console.log('savedNominator')
 		// console.log(savedNominator)
 
@@ -288,35 +288,6 @@ app.get("/manualfetch", async (req, res) => {
 		res.status(400).json({ err: err, message: "error bro" });
 	}
 });
-
-// app.get('/yo', async (req, res) => {
-//   try {
-//     const wsProvider = new WsProvider('wss://kusama-rpc.polkadot.io');
-//     const api = await ApiPromise.create({ provider: wsProvider });
-//     // Retrieve all validators
-//     const allValidators = await api.query.staking.validators();
-//     // Parse validators
-//     const parsedValidators = JSON.parse(JSON.stringify(allValidators))[0];
-//     // Retrieve session validators
-//     const sessionValidators = await api.query.session.validators();
-//     const intentions = await parsedValidators.filter(
-//       validator => !sessionValidators.includes(validator)
-//     );
-
-//     const intentionstotalinfo = await Promise.all(
-//       intentions.map(val => api.derive.staking.account(val))
-//     );
-
-//     res.json(JSON.parse(JSON.stringify(intentionstotalinfo)));
-//   } catch (err) {
-//     console.log(err);
-//   }
-// });
-
-//To keep heroku dyno awake
-// setInterval(function() {
-//   https.get('https://evening-sea-52088.herokuapp.com/');
-// }, 300000 * 5); // every 5 minutes (300000)
 
 const PORT = process.env.PORT || 3009;
 const server = app.listen(PORT, () =>
