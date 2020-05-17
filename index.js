@@ -92,12 +92,11 @@ eraChange.on("newEra", async () => {
 		);
 		console.log("delete previous validators Info");
 		await ValidatorInfo.deleteMany({});
-		console.log("get validators Info");
 		await ValidatorInfo.insertMany(
 			JSON.parse(JSON.stringify(Object.values(validatorsInfoData)))
 		);
 
-		console.log("get rewards/returns")
+		
 		// console.log("electedInfo");
 		// console.log(JSON.stringify(electedInfo));
 		// console.log("validatorsInfoData");
