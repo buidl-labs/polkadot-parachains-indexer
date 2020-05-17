@@ -95,6 +95,11 @@ eraChange.on("newEra", async () => {
 		await ValidatorInfo.insertMany(
 			JSON.parse(JSON.stringify(Object.values(validatorsInfoData)))
 		);
+		console.log('insert elected info')
+		const electedInfoData = new EI(
+			JSON.parse(JSON.stringify(electedInfo))
+		);
+		const savedElectedInfo = await electedInfoData.save();
 
 		
 		// console.log("electedInfo");
@@ -173,7 +178,7 @@ eraChange.on("newEra", async () => {
 		// console.log(eraLength,eraProgress,sessionLength,sessionProgress)
 		//TODO: handle edge case where eraProgress equals 1 withins few minutes/seconds
 		// twice thus leading to inconsistency in the data
-		if ([3150, 3300, 10, 300, 600, 900, 1200, 1500, 1800, 2100, 2350, 2850].indexOf(parseInt(eraProgress)) !== -1) {
+		if ([6300].indexOf(parseInt(eraProgress)) !== -1) {
 			Sentry.captureMessage(`Era changed at: ${new Date()}`);
 			eraChange.emit("newEra");
 		}
@@ -240,6 +245,11 @@ app.get("/manualfetch", async (req, res) => {
 		await ValidatorInfo.insertMany(
 			JSON.parse(JSON.stringify(Object.values(validatorsInfoData)))
 		);
+		console.log('insert elected info')
+		const electedInfoData = new EI(
+			JSON.parse(JSON.stringify(electedInfo))
+		);
+		const savedElectedInfo = await electedInfoData.save();
 		// console.log("electedInfo");
 		// console.log(JSON.stringify(electedInfo));
 		// console.log("validatorsInfoData");
