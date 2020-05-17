@@ -43,10 +43,14 @@ const rewardsHistory = async (last4Eras, provider) => {
             const validatorReward = (data[i].erasRewardPoints.individual[y] / data[i].erasRewardPoints.total * data[i].rewards * parseInt(valExposure[data[i].eraIndex][index].own) / parseInt(valExposure[data[i].eraIndex][index].total)) + parseInt(valPrefs[data[i].eraIndex][index].commission)
             // console.log(validatorReward)
 
+            // nominator info calculation
+            const nominatorsRewards = (valExposure[data[i].eraIndex][index].others).map(x => {
+                const nomId = x.who
+                const nomReward = (data[i].erasRewardPoints.individual[y] / data[i].erasRewardPoints.total * data[i].rewards - parseInt(valPrefs[data[i].eraIndex][index].commission)) * parseInt(x.value) / parseInt(valExposure[data[i].eraIndex][index].total)
+                return { nomId: nomId, nomReward: nomReward }
+            })
+            console.log(JSON.stringify(nominatorsRewards))
         })
-
-
-
     }
     
     
