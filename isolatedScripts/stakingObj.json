@@ -1,0 +1,662 @@
+{
+  "historyDepth": {
+    "name": "HistoryDepth",
+    "modifier": "Default",
+    "type": { "Plain": "u32" },
+    "fallback": "0x54000000",
+    "documentation": [
+      " Number of eras to keep in history.",
+      "",
+      " Information is kept for eras in `[current_era - history_depth; current_era]`.",
+      "",
+      " Must be more than the number of eras delayed by session otherwise.",
+      " I.e. active era must always be in history.",
+      " I.e. `active_era > current_era - history_depth` must be guaranteed."
+    ],
+    "storage": {
+      "method": "HistoryDepth",
+      "prefix": "Staking",
+      "section": "staking"
+    }
+  },
+  "validatorCount": {
+    "name": "ValidatorCount",
+    "modifier": "Default",
+    "type": { "Plain": "u32" },
+    "fallback": "0x00000000",
+    "documentation": [" The ideal number of staking participants."],
+    "storage": {
+      "method": "ValidatorCount",
+      "prefix": "Staking",
+      "section": "staking"
+    }
+  },
+  "minimumValidatorCount": {
+    "name": "MinimumValidatorCount",
+    "modifier": "Default",
+    "type": { "Plain": "u32" },
+    "fallback": "0x04000000",
+    "documentation": [
+      " Minimum number of staking participants before emergency conditions are imposed."
+    ],
+    "storage": {
+      "method": "MinimumValidatorCount",
+      "prefix": "Staking",
+      "section": "staking"
+    }
+  },
+  "invulnerables": {
+    "name": "Invulnerables",
+    "modifier": "Default",
+    "type": { "Plain": "Vec<AccountId>" },
+    "fallback": "0x00",
+    "documentation": [
+      " Any validators that may never be slashed or forcibly kicked. It's a Vec since they're",
+      " easy to initialize and the performance hit is minimal (we expect no more than four",
+      " invulnerables) and restricted to testnets."
+    ],
+    "storage": {
+      "method": "Invulnerables",
+      "prefix": "Staking",
+      "section": "staking"
+    }
+  },
+  "bonded": {
+    "name": "Bonded",
+    "modifier": "Optional",
+    "type": {
+      "Map": {
+        "hasher": "Twox64Concat",
+        "key": "AccountId",
+        "value": "AccountId",
+        "linked": false
+      }
+    },
+    "fallback": "0x00",
+    "documentation": [
+      " Map from all locked \"stash\" accounts to the controller account."
+    ],
+    "storage": { "method": "Bonded", "prefix": "Staking", "section": "staking" }
+  },
+  "ledger": {
+    "name": "Ledger",
+    "modifier": "Optional",
+    "type": {
+      "Map": {
+        "hasher": "Blake2_128Concat",
+        "key": "AccountId",
+        "value": "StakingLedger",
+        "linked": false
+      }
+    },
+    "fallback": "0x00",
+    "documentation": [
+      " Map from all (unlocked) \"controller\" accounts to the info regarding the staking."
+    ],
+    "storage": { "method": "Ledger", "prefix": "Staking", "section": "staking" }
+  },
+  "payee": {
+    "name": "Payee",
+    "modifier": "Default",
+    "type": {
+      "Map": {
+        "hasher": "Twox64Concat",
+        "key": "AccountId",
+        "value": "RewardDestination",
+        "linked": false
+      }
+    },
+    "fallback": "0x00",
+    "documentation": [
+      " Where the reward payment should be made. Keyed by stash."
+    ],
+    "storage": { "method": "Payee", "prefix": "Staking", "section": "staking" }
+  },
+  "validators": {
+    "name": "Validators",
+    "modifier": "Default",
+    "type": {
+      "Map": {
+        "hasher": "Twox64Concat",
+        "key": "AccountId",
+        "value": "ValidatorPrefs",
+        "linked": false
+      }
+    },
+    "fallback": "0x00",
+    "documentation": [
+      " The map from (wannabe) validator stash key to the preferences of that validator."
+    ],
+    "storage": {
+      "method": "Validators",
+      "prefix": "Staking",
+      "section": "staking"
+    }
+  },
+  "nominators": {
+    "name": "Nominators",
+    "modifier": "Optional",
+    "type": {
+      "Map": {
+        "hasher": "Twox64Concat",
+        "key": "AccountId",
+        "value": "Nominations",
+        "linked": false
+      }
+    },
+    "fallback": "0x00",
+    "documentation": [
+      " The map from nominator stash key to the set of stash keys of all validators to nominate."
+    ],
+    "storage": {
+      "method": "Nominators",
+      "prefix": "Staking",
+      "section": "staking"
+    }
+  },
+  "currentEra": {
+    "name": "CurrentEra",
+    "modifier": "Optional",
+    "type": { "Plain": "EraIndex" },
+    "fallback": "0x00",
+    "documentation": [
+      " The current era index.",
+      "",
+      " This is the latest planned era, depending on how the Session pallet queues the validator",
+      " set, it might be active or not."
+    ],
+    "storage": {
+      "method": "CurrentEra",
+      "prefix": "Staking",
+      "section": "staking"
+    }
+  },
+  "activeEra": {
+    "name": "ActiveEra",
+    "modifier": "Optional",
+    "type": { "Plain": "ActiveEraInfo" },
+    "fallback": "0x00",
+    "documentation": [
+      " The active era information, it holds index and start.",
+      "",
+      " The active era is the era currently rewarded.",
+      " Validator set of this era must be equal to `SessionInterface::validators`."
+    ],
+    "storage": {
+      "method": "ActiveEra",
+      "prefix": "Staking",
+      "section": "staking"
+    }
+  },
+  "erasStartSessionIndex": {
+    "name": "ErasStartSessionIndex",
+    "modifier": "Optional",
+    "type": {
+      "Map": {
+        "hasher": "Twox64Concat",
+        "key": "EraIndex",
+        "value": "SessionIndex",
+        "linked": false
+      }
+    },
+    "fallback": "0x00",
+    "documentation": [
+      " The session index at which the era start for the last `HISTORY_DEPTH` eras."
+    ],
+    "storage": {
+      "method": "ErasStartSessionIndex",
+      "prefix": "Staking",
+      "section": "staking"
+    }
+  },
+  "erasStakers": {
+    "name": "ErasStakers",
+    "modifier": "Default",
+    "type": {
+      "DoubleMap": {
+        "hasher": "Twox64Concat",
+        "key1": "EraIndex",
+        "key2": "AccountId",
+        "value": "Exposure",
+        "key2Hasher": "Twox64Concat"
+      }
+    },
+    "fallback": "0x000000",
+    "documentation": [
+      " Exposure of validator at era.",
+      "",
+      " This is keyed first by the era index to allow bulk deletion and then the stash account.",
+      "",
+      " Is it removed after `HISTORY_DEPTH` eras.",
+      " If stakers hasn't been set or has been removed then empty exposure is returned."
+    ],
+    "storage": {
+      "method": "ErasStakers",
+      "prefix": "Staking",
+      "section": "staking"
+    }
+  },
+  "erasStakersClipped": {
+    "name": "ErasStakersClipped",
+    "modifier": "Default",
+    "type": {
+      "DoubleMap": {
+        "hasher": "Twox64Concat",
+        "key1": "EraIndex",
+        "key2": "AccountId",
+        "value": "Exposure",
+        "key2Hasher": "Twox64Concat"
+      }
+    },
+    "fallback": "0x000000",
+    "documentation": [
+      " Clipped Exposure of validator at era.",
+      "",
+      " This is similar to [`ErasStakers`] but number of nominators exposed is reduced to the",
+      " `T::MaxNominatorRewardedPerValidator` biggest stakers.",
+      " (Note: the field `total` and `own` of the exposure remains unchanged).",
+      " This is used to limit the i/o cost for the nominator payout.",
+      "",
+      " This is keyed fist by the era index to allow bulk deletion and then the stash account.",
+      "",
+      " Is it removed after `HISTORY_DEPTH` eras.",
+      " If stakers hasn't been set or has been removed then empty exposure is returned."
+    ],
+    "storage": {
+      "method": "ErasStakersClipped",
+      "prefix": "Staking",
+      "section": "staking"
+    }
+  },
+  "erasValidatorPrefs": {
+    "name": "ErasValidatorPrefs",
+    "modifier": "Default",
+    "type": {
+      "DoubleMap": {
+        "hasher": "Twox64Concat",
+        "key1": "EraIndex",
+        "key2": "AccountId",
+        "value": "ValidatorPrefs",
+        "key2Hasher": "Twox64Concat"
+      }
+    },
+    "fallback": "0x00",
+    "documentation": [
+      " Similar to `ErasStakers`, this holds the preferences of validators.",
+      "",
+      " This is keyed first by the era index to allow bulk deletion and then the stash account.",
+      "",
+      " Is it removed after `HISTORY_DEPTH` eras."
+    ],
+    "storage": {
+      "method": "ErasValidatorPrefs",
+      "prefix": "Staking",
+      "section": "staking"
+    }
+  },
+  "erasValidatorReward": {
+    "name": "ErasValidatorReward",
+    "modifier": "Optional",
+    "type": {
+      "Map": {
+        "hasher": "Twox64Concat",
+        "key": "EraIndex",
+        "value": "BalanceOf",
+        "linked": false
+      }
+    },
+    "fallback": "0x00",
+    "documentation": [
+      " The total validator era payout for the last `HISTORY_DEPTH` eras.",
+      "",
+      " Eras that haven't finished yet or has been removed doesn't have reward."
+    ],
+    "storage": {
+      "method": "ErasValidatorReward",
+      "prefix": "Staking",
+      "section": "staking"
+    }
+  },
+  "erasRewardPoints": {
+    "name": "ErasRewardPoints",
+    "modifier": "Default",
+    "type": {
+      "Map": {
+        "hasher": "Twox64Concat",
+        "key": "EraIndex",
+        "value": "EraRewardPoints",
+        "linked": false
+      }
+    },
+    "fallback": "0x0000000000",
+    "documentation": [
+      " Rewards for the last `HISTORY_DEPTH` eras.",
+      " If reward hasn't been set or has been removed then 0 reward is returned."
+    ],
+    "storage": {
+      "method": "ErasRewardPoints",
+      "prefix": "Staking",
+      "section": "staking"
+    }
+  },
+  "erasTotalStake": {
+    "name": "ErasTotalStake",
+    "modifier": "Default",
+    "type": {
+      "Map": {
+        "hasher": "Twox64Concat",
+        "key": "EraIndex",
+        "value": "BalanceOf",
+        "linked": false
+      }
+    },
+    "fallback": "0x00000000000000000000000000000000",
+    "documentation": [
+      " The total amount staked for the last `HISTORY_DEPTH` eras.",
+      " If total hasn't been set or has been removed then 0 stake is returned."
+    ],
+    "storage": {
+      "method": "ErasTotalStake",
+      "prefix": "Staking",
+      "section": "staking"
+    }
+  },
+  "forceEra": {
+    "name": "ForceEra",
+    "modifier": "Default",
+    "type": { "Plain": "Forcing" },
+    "fallback": "0x00",
+    "documentation": [" Mode of era forcing."],
+    "storage": {
+      "method": "ForceEra",
+      "prefix": "Staking",
+      "section": "staking"
+    }
+  },
+  "slashRewardFraction": {
+    "name": "SlashRewardFraction",
+    "modifier": "Default",
+    "type": { "Plain": "Perbill" },
+    "fallback": "0x00000000",
+    "documentation": [
+      " The percentage of the slash that is distributed to reporters.",
+      "",
+      " The rest of the slashed value is handled by the `Slash`."
+    ],
+    "storage": {
+      "method": "SlashRewardFraction",
+      "prefix": "Staking",
+      "section": "staking"
+    }
+  },
+  "canceledSlashPayout": {
+    "name": "CanceledSlashPayout",
+    "modifier": "Default",
+    "type": { "Plain": "BalanceOf" },
+    "fallback": "0x00000000000000000000000000000000",
+    "documentation": [
+      " The amount of currency given to reporters of a slash event which was",
+      " canceled by extraordinary circumstances (e.g. governance)."
+    ],
+    "storage": {
+      "method": "CanceledSlashPayout",
+      "prefix": "Staking",
+      "section": "staking"
+    }
+  },
+  "unappliedSlashes": {
+    "name": "UnappliedSlashes",
+    "modifier": "Default",
+    "type": {
+      "Map": {
+        "hasher": "Twox64Concat",
+        "key": "EraIndex",
+        "value": "Vec<UnappliedSlash>",
+        "linked": false
+      }
+    },
+    "fallback": "0x00",
+    "documentation": [" All unapplied slashes that are queued for later."],
+    "storage": {
+      "method": "UnappliedSlashes",
+      "prefix": "Staking",
+      "section": "staking"
+    }
+  },
+  "bondedEras": {
+    "name": "BondedEras",
+    "modifier": "Default",
+    "type": { "Plain": "Vec<(EraIndex,SessionIndex)>" },
+    "fallback": "0x00",
+    "documentation": [
+      " A mapping from still-bonded eras to the first session index of that era.",
+      "",
+      " Must contains information for eras for the range:",
+      " `[active_era - bounding_duration; active_era]`"
+    ],
+    "storage": {
+      "method": "BondedEras",
+      "prefix": "Staking",
+      "section": "staking"
+    }
+  },
+  "validatorSlashInEra": {
+    "name": "ValidatorSlashInEra",
+    "modifier": "Optional",
+    "type": {
+      "DoubleMap": {
+        "hasher": "Twox64Concat",
+        "key1": "EraIndex",
+        "key2": "AccountId",
+        "value": "(Perbill,BalanceOf)",
+        "key2Hasher": "Twox64Concat"
+      }
+    },
+    "fallback": "0x00",
+    "documentation": [
+      " All slashing events on validators, mapped by era to the highest slash proportion",
+      " and slash value of the era."
+    ],
+    "storage": {
+      "method": "ValidatorSlashInEra",
+      "prefix": "Staking",
+      "section": "staking"
+    }
+  },
+  "nominatorSlashInEra": {
+    "name": "NominatorSlashInEra",
+    "modifier": "Optional",
+    "type": {
+      "DoubleMap": {
+        "hasher": "Twox64Concat",
+        "key1": "EraIndex",
+        "key2": "AccountId",
+        "value": "BalanceOf",
+        "key2Hasher": "Twox64Concat"
+      }
+    },
+    "fallback": "0x00",
+    "documentation": [
+      " All slashing events on nominators, mapped by era to the highest slash value of the era."
+    ],
+    "storage": {
+      "method": "NominatorSlashInEra",
+      "prefix": "Staking",
+      "section": "staking"
+    }
+  },
+  "slashingSpans": {
+    "name": "SlashingSpans",
+    "modifier": "Optional",
+    "type": {
+      "Map": {
+        "hasher": "Twox64Concat",
+        "key": "AccountId",
+        "value": "SlashingSpans",
+        "linked": false
+      }
+    },
+    "fallback": "0x00",
+    "documentation": [" Slashing spans for stash accounts."],
+    "storage": {
+      "method": "SlashingSpans",
+      "prefix": "Staking",
+      "section": "staking"
+    }
+  },
+  "spanSlash": {
+    "name": "SpanSlash",
+    "modifier": "Default",
+    "type": {
+      "Map": {
+        "hasher": "Twox64Concat",
+        "key": "(AccountId,SpanIndex)",
+        "value": "SpanRecord",
+        "linked": false
+      }
+    },
+    "fallback": "0x0000000000000000000000000000000000000000000000000000000000000000",
+    "documentation": [
+      " Records information about the maximum slash of a stash within a slashing span,",
+      " as well as how much reward has been paid out."
+    ],
+    "storage": {
+      "method": "SpanSlash",
+      "prefix": "Staking",
+      "section": "staking"
+    }
+  },
+  "earliestUnappliedSlash": {
+    "name": "EarliestUnappliedSlash",
+    "modifier": "Optional",
+    "type": { "Plain": "EraIndex" },
+    "fallback": "0x00",
+    "documentation": [
+      " The earliest era for which we have a pending, unapplied slash."
+    ],
+    "storage": {
+      "method": "EarliestUnappliedSlash",
+      "prefix": "Staking",
+      "section": "staking"
+    }
+  },
+  "snapshotValidators": {
+    "name": "SnapshotValidators",
+    "modifier": "Optional",
+    "type": { "Plain": "Vec<AccountId>" },
+    "fallback": "0x00",
+    "documentation": [
+      " Snapshot of validators at the beginning of the current election window. This should only",
+      " have a value when [`EraElectionStatus`] == `ElectionStatus::Open(_)`."
+    ],
+    "storage": {
+      "method": "SnapshotValidators",
+      "prefix": "Staking",
+      "section": "staking"
+    }
+  },
+  "snapshotNominators": {
+    "name": "SnapshotNominators",
+    "modifier": "Optional",
+    "type": { "Plain": "Vec<AccountId>" },
+    "fallback": "0x00",
+    "documentation": [
+      " Snapshot of nominators at the beginning of the current election window. This should only",
+      " have a value when [`EraElectionStatus`] == `ElectionStatus::Open(_)`."
+    ],
+    "storage": {
+      "method": "SnapshotNominators",
+      "prefix": "Staking",
+      "section": "staking"
+    }
+  },
+  "queuedElected": {
+    "name": "QueuedElected",
+    "modifier": "Optional",
+    "type": { "Plain": "ElectionResult" },
+    "fallback": "0x00",
+    "documentation": [
+      " The next validator set. At the end of an era, if this is available (potentially from the",
+      " result of an offchain worker), it is immediately used. Otherwise, the on-chain election",
+      " is executed."
+    ],
+    "storage": {
+      "method": "QueuedElected",
+      "prefix": "Staking",
+      "section": "staking"
+    }
+  },
+  "queuedScore": {
+    "name": "QueuedScore",
+    "modifier": "Optional",
+    "type": { "Plain": "PhragmenScore" },
+    "fallback": "0x00",
+    "documentation": [" The score of the current [`QueuedElected`]."],
+    "storage": {
+      "method": "QueuedScore",
+      "prefix": "Staking",
+      "section": "staking"
+    }
+  },
+  "eraElectionStatus": {
+    "name": "EraElectionStatus",
+    "modifier": "Default",
+    "type": { "Plain": "ElectionStatus" },
+    "fallback": "0x00",
+    "documentation": [
+      " Flag to control the execution of the offchain election. When `Open(_)`, we accept",
+      " solutions to be submitted."
+    ],
+    "storage": {
+      "method": "EraElectionStatus",
+      "prefix": "Staking",
+      "section": "staking"
+    }
+  },
+  "isCurrentSessionFinal": {
+    "name": "IsCurrentSessionFinal",
+    "modifier": "Default",
+    "type": { "Plain": "bool" },
+    "fallback": "0x00",
+    "documentation": [
+      " True if the current **planned** session is final. Note that this does not take era",
+      " forcing into account."
+    ],
+    "storage": {
+      "method": "IsCurrentSessionFinal",
+      "prefix": "Staking",
+      "section": "staking"
+    }
+  },
+  "storageVersion": {
+    "name": "StorageVersion",
+    "modifier": "Default",
+    "type": { "Plain": "ReleasesStaking" },
+    "fallback": "0x02",
+    "documentation": [
+      " True if network has been upgraded to this version.",
+      " Storage version of the pallet.",
+      "",
+      " This is set to v3.0.0 for new networks."
+    ],
+    "storage": {
+      "method": "StorageVersion",
+      "prefix": "Staking",
+      "section": "staking"
+    }
+  },
+  "migrateEra": {
+    "name": "MigrateEra",
+    "modifier": "Optional",
+    "type": { "Plain": "EraIndex" },
+    "fallback": "0x00",
+    "documentation": [
+      " The era where we migrated from Lazy Payouts to Simple Payouts"
+    ],
+    "storage": {
+      "method": "MigrateEra",
+      "prefix": "Staking",
+      "section": "staking"
+    }
+  }
+}

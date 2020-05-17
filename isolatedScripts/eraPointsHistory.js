@@ -1,7 +1,7 @@
 const { ApiPromise } = require("@polkadot/api");
 // const { hexToString } = require("@polkadot/util");
 
-const getPolkaData = async (provider) => {
+const eraPointsHistory = async (provider) => {
 	// Initialise the provider to connect to the local node
 	// const provider = new WsProvider("wss://kusama-rpc.polkadot.io");
 
@@ -16,21 +16,31 @@ const getPolkaData = async (provider) => {
 		i => i + lastAvailableEra
 	);
 	// console.log(eraIndex);
+	let rewardsWithEraIndex = {}
+	const rewards = await Promise.all(
+		eraIndex.map(i => api_.query.staking.erasValidatorReward(i))
+	)
+	rewards.forEach((x, i) => {
+		rewardsWithEraIndex[eraIndex[i]] = x
+	})
 	const erasRewardPointsArr = await Promise.all(
 		eraIndex.map(i => api_.query.staking.erasRewardPoints(i))
 	);
 
-	const rewardHistory = eraIndex.map((i, index) => {
+	const pointsHistory = eraIndex.map((i, index) => {
 		return { eraIndex: i, erasRewardPoints: erasRewardPointsArr[index] };
 	});
-	// console.log("rewardHistory" + JSON.stringify(rewardHistory));
-	// console.log("rewardHistory" + rewardHistory.length);
+	// console.log("pointsHistory" + JSON.stringify(pointsHistory));
 	// console.log(eraIndex.length)
 	// console.log(erasRewardPointsArr.length)
 	// await api_.disconnect();
+	let last4Eras = pointsHistory.slice(Math.max(pointsHistory.length - 4, 0))
+	last4Eras.map(x => {
+		x.rewards =rewardsWithEraIndex[x.eraIndex]
+	})
 
 	let validatorList = {}
-	rewardHistory.forEach(element => {
+	pointsHistory.forEach(element => {
 		Object.keys(element.erasRewardPoints.individual.toJSON()).forEach(addr => {
 			if (!(addr in validatorList)) {
 				validatorList[addr] = {
@@ -51,10 +61,10 @@ const getPolkaData = async (provider) => {
 				});
 			}
 		});
-    });
+	});
     
-    return validatorList
-
+	return [validatorList, last4Eras]
+	
 }
 
-module.exports = getPolkaData;
+module.exports = eraPointsHistory;

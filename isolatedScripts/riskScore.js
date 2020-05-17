@@ -29,6 +29,7 @@ const riskScoreCalculator = async (validatorsData, provider) => {
     const minOthS = Math.min(...otherStakeArr)
     // console.log(minOthS)
     let slashesInfo ={}  
+    console.log('++++getting slash info+++++')
     await Promise.all(
 		accountsDetailsJSON.map(async element => {
             const slashInfo = await api.derive.staking.ownSlashes(element.stashId.toString())
@@ -47,6 +48,7 @@ const riskScoreCalculator = async (validatorsData, provider) => {
     let riskScoreArr=[]
     function scaleData(val, max, min) { return (val - min) / (max - min) * (100-1) + 1; }
     function normalizeData(val, max, min) { return (val - min) / (max - min); }
+    console.log('+++++restructuring data+++++')
     accountsDetailsJSON.forEach(element => {
         const otherStake = element.info.exposure.others.reduce((a, b) => a + parseInt(b.value), 0)
         // console.log(otherStake)
@@ -63,6 +65,7 @@ const riskScoreCalculator = async (validatorsData, provider) => {
         // console.log('stashId: ' + x.stashId + ' normalizedRS: ' + normalizeData(x.riskScore, maxRS, minRS)  )
         x.riskScore = normalizeData(x.riskScore, maxRS, minRS)
     })
+    console.log('riskscore completed')
     return riskScoreArr
 
 };

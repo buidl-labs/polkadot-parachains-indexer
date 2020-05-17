@@ -21,6 +21,7 @@ const validatorsIS = require("./isolatedScripts/validators")
 const intentionsIS = require("./isolatedScripts/intentions")
 const validatorsInfoIS = require("./isolatedScripts/validatorsInfo")
 const nominatorsIS = require("./isolatedScripts/nominators")
+const returnsHistory = require("./isolatedScripts/rewardsHistory")
 const riskScoreCalculator = require("./isolatedScripts/riskScore")
 // const getPolkaData = require("./utils/getPolkaData");
 const validatorsInfos = require("./routes/validatorsInfos");
@@ -64,8 +65,9 @@ eraChange.on("newEra", async () => {
 		console.log("era func start");
 
 		console.log("get previous eraPoints");
-		const previousEraPoints = await eraPointsHistory(wsProvider);
+		const [previousEraPoints, last4Eras] = await eraPointsHistory(wsProvider);
 		// console.log(JSON.stringify(previousEraPoints));
+		console.log(JSON.stringify(last4Eras))
 
 		// get active validators
 		console.log("get validators");
@@ -73,7 +75,7 @@ eraChange.on("newEra", async () => {
 		console.log("delete previous validators");
 		await Validator.deleteMany({});
 		console.log('insert new validators')
-		await Validator.insertMany(
+		const savedValidator = await Validator.insertMany(
 			JSON.parse(JSON.stringify(Object.values(validatorsData)))
 		);
 		// console.log(JSON.parse(JSON.stringify(validatorsData)));
@@ -84,7 +86,7 @@ eraChange.on("newEra", async () => {
 		// get validators Info
 		console.log("get validators Info");
 		const [validatorsInfoData, electedInfo] = await validatorsInfoIS(
-			validatorsData, wsProvider
+			validatorsData , wsProvider
 		);
 		console.log("delete previous validators Info");
 		await ValidatorInfo.deleteMany({});
@@ -92,6 +94,8 @@ eraChange.on("newEra", async () => {
 		await ValidatorInfo.insertMany(
 			JSON.parse(JSON.stringify(Object.values(validatorsInfoData)))
 		);
+
+		console.log("get rewards/returns")
 		// console.log("electedInfo");
 		// console.log(JSON.stringify(electedInfo));
 		// console.log("validatorsInfoData");
@@ -157,6 +161,8 @@ eraChange.on("newEra", async () => {
 	}
 });
 
+
+// Todo change the below logic to something which is independent of externalities
 (async () => {
 	// const wsProvider = new WsProvider("wss://kusama-rpc.polkadot.io");
 	const api = await ApiPromise.create({ provider: wsProvider });
@@ -201,8 +207,12 @@ app.get("/manualfetch", async (req, res) => {
 
 		// const result = await getPolkaData();
 		console.log("get previous eraPoints");
-		const previousEraPoints = await eraPointsHistory(wsProvider);
+		const [previousEraPoints, last4Eras] = await eraPointsHistory(wsProvider);
 		// console.log(JSON.stringify(previousEraPoints));
+		// console.log(JSON.stringify(last4Eras))
+		
+		console.log("get rewards history")
+		const [validatorsPoolReward, nominatorsROI] = await returnsHistory(last4Eras, wsProvider)
 
 		// get active validators
 		console.log("get validators");
