@@ -23,17 +23,16 @@ const validatorsInfo = async (validatorsData, rewards, provider) => {
 		// console.log('temp: ' + JSON.stringify(temp))
 		// console.log(JSON.stringify(validatorsData[validator]))
 		validatorsData[validator].currentValidator = temp
-		const rewardsInfo = JSON.parse(JSON.stringify(rewards)).find(
+		JSON.parse(JSON.stringify(rewards)).forEach(
 			val => {
 				// console.log(currentValidator.stashId)
 				if (val.stashId === validator.toString()) {
-					return true;
+					validatorsData[validator].rewards.push(val)
 				}
 			}
 		);
 		// console.log('temp: ' + JSON.stringify(temp))
 		// console.log(JSON.stringify(validatorsData[validator]))
-		validatorsData[validator].rewards.push(rewardsInfo)
 	});
 	// console.log(JSON.stringify(validatorsData))
 

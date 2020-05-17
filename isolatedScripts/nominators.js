@@ -1,6 +1,6 @@
 const { ApiPromise } = require("@polkadot/api");
 // const { hexToString } = require("@polkadot/util");
-const nominators = async (validatorsData, provider) => {
+const nominators = async (validatorsData, rewards, provider) => {
 	// Initialise the provider to connect to the local node
 	// const provider = new WsProvider("wss://kusama-rpc.polkadot.io");
 
@@ -27,6 +27,7 @@ const nominators = async (validatorsData, provider) => {
 	const finalNominatorsList = [];
 	nominators.map(nom => {
 		let temp = [];
+		let rewardsArr =[]
 		Object.keys(validatorsData).forEach(data => {
 			validatorsData[data].info.exposure.others.forEach(curr => {
 				if (nom.who.toString() === curr.who.toString()) {
@@ -38,6 +39,18 @@ const nominators = async (validatorsData, provider) => {
 				}
 			});
 		});
+		JSON.parse(JSON.stringify(rewards)).forEach(
+			rew => {
+				// console.log(currentValidator.stashId)
+				rew.nominatorsRewards.map(n =>{
+					if (n.nomId.toString() === nom.who.toString()) {
+						n.valStashId = rew.valStashId
+						n.eraIndex = rew.eraIndex
+						rewardsArr.push(n)
+					}
+				})
+			}
+		);
 
 		if (temp.length > 0) {
 			//for reference: https://docs.google.com/document/d/13dLBH5Ngu63lCQryRW3BiiJlXlYllg_fAzAObmOh0gw/edit?pli=1
@@ -65,6 +78,7 @@ const nominators = async (validatorsData, provider) => {
 				totalStaked: parseFloat(total.toFixed(3)),
 				highestStaked: parseFloat(highest.toFixed(3)),
 				othersStaked: parseFloat(other.toFixed(3)),
+				rewardsArr: rewardsArr,
 				// expectedDailyRoi: parseFloat(expectedDailyRoi),
 				backers: temp.length
 			});

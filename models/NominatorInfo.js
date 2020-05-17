@@ -66,6 +66,13 @@ const Nominator = new mongoose.Schema(
       type: Number,
       // required: true
     },
+    rewardsArr: [
+      {
+        nomId: String,
+        nomReward: Number,
+        nomStake: Number
+      }
+    ],
     // expectedDailyRoi: {
     //   type: Number,
     //   default: 0,

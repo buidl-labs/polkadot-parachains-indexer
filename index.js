@@ -242,7 +242,7 @@ app.get("/manualfetch", async (req, res) => {
 		// console.log("electedInfo");
 		// console.log(JSON.stringify(electedInfo));
 		// console.log("validatorsInfoData");
-		console.log(JSON.stringify(validatorsInfoData));
+		// console.log(JSON.stringify(validatorsInfoData));
 
 		//get intentions
 		console.log("get intentions");

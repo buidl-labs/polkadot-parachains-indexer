@@ -82,11 +82,6 @@ const ValidatorInfo = new mongoose.Schema(
             nomId: String,
             nomReward: Number,
             nomStake: Number
-          },
-          {
-            nomId: String,
-            nomReward: Number,
-            nomStake: Number
           }
         ]
       }
