@@ -95,6 +95,11 @@ eraChange.on("newEra", async () => {
 		await ValidatorInfo.insertMany(
 			JSON.parse(JSON.stringify(Object.values(validatorsInfoData)))
 		);
+		console.log('insert elected info')
+		const electedInfoData = new EI(
+			JSON.parse(JSON.stringify(electedInfo))
+		);
+		const savedElectedInfo = await electedInfoData.save();
 
 		
 		// console.log("electedInfo");
@@ -240,6 +245,11 @@ app.get("/manualfetch", async (req, res) => {
 		await ValidatorInfo.insertMany(
 			JSON.parse(JSON.stringify(Object.values(validatorsInfoData)))
 		);
+		console.log('insert elected info')
+		const electedInfoData = new EI(
+			JSON.parse(JSON.stringify(electedInfo))
+		);
+		const savedElectedInfo = await electedInfoData.save();
 		// console.log("electedInfo");
 		// console.log(JSON.stringify(electedInfo));
 		// console.log("validatorsInfoData");
