@@ -37,16 +37,16 @@ const riskScoreCalculator = async (validatorsData, provider) => {
       api.derive.staking.ownSlashes(element.stashId.toString())
     )
   );
-  console.log("got raw data");
+  console.log("get raw data");
   slashRawData.map((data, index) => {
     slashesInfo[accountsDetailsJSON[index].stashId.toString()] = {
       slashInfo: data,
       slashCount: data.reduce((acc, slash) => acc + slash.total.toNumber(), 0),
     };
   });
-  console.log("structed raw data");
+//   console.log("structed raw data");
 
-  console.log(JSON.stringify(slashesInfo));
+//   console.log(JSON.stringify(slashesInfo));
 
   // scaling data between 1 = a and 100 = b
   let riskScoreArr = [];
