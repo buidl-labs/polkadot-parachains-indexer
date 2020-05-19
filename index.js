@@ -85,82 +85,82 @@ eraChange.on("newEra", async () => {
 		// const validatorsDataObject = {...(Object.values(validatorsData))}
 		// console.log(JSON.stringify(validatorsDataObject))
 
-		// get validators Info
-		console.log("get validators Info");
-		const [validatorsInfoData, electedInfo] = await validatorsInfoIS(
-			validatorsData , rewards, wsProvider
-		);
-		console.log("delete previous validators Info");
-		await ValidatorInfo.deleteMany({});
-		await ValidatorInfo.insertMany(
-			JSON.parse(JSON.stringify(Object.values(validatorsInfoData)))
-		);
-		console.log('insert elected info')
-		const electedInfoData = new EI(
-			JSON.parse(JSON.stringify(electedInfo))
-		);
-		const savedElectedInfo = await electedInfoData.save();
+		// // get validators Info
+		// console.log("get validators Info");
+		// const [validatorsInfoData, electedInfo] = await validatorsInfoIS(
+		// 	validatorsData , rewards, wsProvider
+		// );
+		// console.log("delete previous validators Info");
+		// await ValidatorInfo.deleteMany({});
+		// await ValidatorInfo.insertMany(
+		// 	JSON.parse(JSON.stringify(Object.values(validatorsInfoData)))
+		// );
+		// console.log('insert elected info')
+		// const electedInfoData = new EI(
+		// 	JSON.parse(JSON.stringify(electedInfo))
+		// );
+		// const savedElectedInfo = await electedInfoData.save();
 
 		
-		// console.log("electedInfo");
-		// console.log(JSON.stringify(electedInfo));
-		// console.log("validatorsInfoData");
-		// console.log(JSON.stringify(validatorsInfoData));
+		// // console.log("electedInfo");
+		// // console.log(JSON.stringify(electedInfo));
+		// // console.log("validatorsInfoData");
+		// // console.log(JSON.stringify(validatorsInfoData));
 
-		//get intentions
-		console.log("get intentions");
-		const [intention, intentionsTotalInfo, validatorsAndIntentions, intentionsData] = await intentionsIS(
-			previousEraPoints, wsProvider
-		);
-		console.log("delete intentions");
-		await Intention.deleteMany({});
-		console.log("insert intentions");
-		const intentionData = new Intention({
-			intentions: JSON.parse(JSON.stringify(intention)),
-			validatorsAndIntentions: JSON.parse(
-				JSON.stringify(validatorsAndIntentions)
-			),
-			info: JSON.parse(JSON.stringify(intentionsTotalInfo))
-		});
-		const savedIntention = await intentionData.save();
-		// console.log("intention");
-		// console.log(JSON.stringify(intention));
-		// console.log("intentionsTotalInfo");
-		// console.log(JSON.stringify(intentionsTotalInfo));
-		// console.log("intentionsData");
-		// console.log(JSON.stringify(intentionsData));
+		// //get intentions
+		// console.log("get intentions");
+		// const [intention, intentionsTotalInfo, validatorsAndIntentions, intentionsData] = await intentionsIS(
+		// 	previousEraPoints, wsProvider
+		// );
+		// console.log("delete intentions");
+		// await Intention.deleteMany({});
+		// console.log("insert intentions");
+		// const intentionData = new Intention({
+		// 	intentions: JSON.parse(JSON.stringify(intention)),
+		// 	validatorsAndIntentions: JSON.parse(
+		// 		JSON.stringify(validatorsAndIntentions)
+		// 	),
+		// 	info: JSON.parse(JSON.stringify(intentionsTotalInfo))
+		// });
+		// const savedIntention = await intentionData.save();
+		// // console.log("intention");
+		// // console.log(JSON.stringify(intention));
+		// // console.log("intentionsTotalInfo");
+		// // console.log(JSON.stringify(intentionsTotalInfo));
+		// // console.log("intentionsData");
+		// // console.log(JSON.stringify(intentionsData));
 
-		// get risk score
-		console.log("get risk score");
-		const riskScoreData = await riskScoreCalculator(validatorsData, wsProvider);
-		console.log("delete risk score");
-		await RiskScore.deleteMany({});
-		console.log("insert risk score");
-		await RiskScore.insertMany(
-			JSON.parse(JSON.stringify(riskScoreData))
-		);
-		// console.log("riskScoreData");
-		// console.log(JSON.stringify(riskScoreData));
+		// // get risk score
+		// console.log("get risk score");
+		// const riskScoreData = await riskScoreCalculator(validatorsData, wsProvider);
+		// console.log("delete risk score");
+		// await RiskScore.deleteMany({});
+		// console.log("insert risk score");
+		// await RiskScore.insertMany(
+		// 	JSON.parse(JSON.stringify(riskScoreData))
+		// );
+		// // console.log("riskScoreData");
+		// // console.log(JSON.stringify(riskScoreData));
 
-		// get nominatorsData
-		console.log("get nominators");
-		const nominatorsData = await nominatorsIS(validatorsData, rewards, wsProvider);
-		console.log("delete nominators");
-		await Nominator.deleteMany({});
-		console.log("insert nominators");
-		const savedNominator = await Nominator.insertMany(
-			JSON.parse(JSON.stringify(nominatorsData))
-		);
-		// console.log(JSON.stringify(nominatorsData));
-		// console.log('savedNominator')
-		// console.log(savedNominator)
+		// // get nominatorsData
+		// console.log("get nominators");
+		// const nominatorsData = await nominatorsIS(validatorsData, rewards, wsProvider);
+		// console.log("delete nominators");
+		// await Nominator.deleteMany({});
+		// console.log("insert nominators");
+		// const savedNominator = await Nominator.insertMany(
+		// 	JSON.parse(JSON.stringify(nominatorsData))
+		// );
+		// // console.log(JSON.stringify(nominatorsData));
+		// // console.log('savedNominator')
+		// // console.log(savedNominator)
 
 		
-		let final = {};
-		final.filteredValidatorsList = savedValidator;
-		final.electedInfo = savedElectedInfo;
-		final.intentionsData = savedIntention;
-		io.emit("onDataChange", final);
+		// let final = {};
+		// final.filteredValidatorsList = savedValidator;
+		// final.electedInfo = savedElectedInfo;
+		// final.intentionsData = savedIntention;
+		// io.emit("onDataChange", final);
 		console.log("era func end");
 	} catch (err) {
 		console.log(err);
@@ -178,7 +178,7 @@ eraChange.on("newEra", async () => {
 		// console.log(eraLength,eraProgress,sessionLength,sessionProgress)
 		//TODO: handle edge case where eraProgress equals 1 withins few minutes/seconds
 		// twice thus leading to inconsistency in the data
-		if ([3150, 3300, 10, 300, 600, 900, 1200, 1500, 1800, 2100, 2350, 2850].indexOf(parseInt(eraProgress)) !== -1) {
+		if ([3150, 3300, 3450, 10, 300, 600, 900, 1200, 1500, 1800, 2100, 2350, 2500, 2650, 2850, 3000].indexOf(parseInt(eraProgress)) !== -1) {
 			Sentry.captureMessage(`Era changed at: ${new Date()}`);
 			eraChange.emit("newEra");
 		}
