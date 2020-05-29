@@ -61,7 +61,7 @@ We use [Sentry](https://sentry.io/welcome/) for monitoring errors.
 
 #### 3. Where is the production API deployed?
 
-Currently we use [Render](https://render.com/) to deployment.
+Currently we use [Render](https://render.com/) for production deployment.
 
 #### 4. The above tech stack feels quite centralized, how are you planning to remove these centralized single point of failures?
 
