@@ -1,6 +1,6 @@
 # polkadot-chains-indexer
 
-This project serves two goals for chains inside the polkadot ecosystem:
+This project serves two goals for chains inside the [Polkadot](https://polkadot.network/) ecosystem:
 
 1. chain-indexer: extract, transform and load on-chain data for post analysis to a database.
 2. API: bi-directional API for reading data to power dashboards/frontends.
@@ -9,7 +9,7 @@ This project serves two goals for chains inside the polkadot ecosystem:
 
 - Currently supported chains:
 
-  - Kusama
+  - [Kusama](https://kusama.network/)
 
 - Currently supported DB:
 
@@ -72,3 +72,7 @@ We are on the same page with the ethos of the crypto space and we plan to move o
 - [Node.js](https://nodejs.org/en/)
 - [Express](https://expressjs.com/)
 - [MongoDB Altas](https://www.mongodb.com/cloud/atlas)
+
+## Gratitude:
+
+<img src="./.github/web3 foundation_grants_badge_black.png">
