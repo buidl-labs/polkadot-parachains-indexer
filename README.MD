@@ -30,23 +30,25 @@ This project serves two goals for chains inside the [Polkadot](https://polkadot.
 ```
 git https://github.com/buidl-labs/polka-analytics-api.git
 cd polka-analytics-api
-
+```
 
 
 ## Install all dependencies
+```
 npm install
-
+```
 
 
 ## Set environment variables
+```
 export DB="your-atlas-connection-string"
 export SENTRY_DNS="your-sentry-dsn-url"
-
+```
 
 
 ## Fire up the engines:
+```
 npm start
-
 ```
 
 ## FAQ <a name = "usage"></a>
