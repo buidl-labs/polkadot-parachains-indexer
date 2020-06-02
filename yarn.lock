@@ -165,7 +165,7 @@
     tweetnacl "^1.0.3"
     xxhashjs "^0.2.2"
 
-"@polkadot/util@2.9.1", "@polkadot/util@^2.9.1":
+"@polkadot/util@2.9.1":
   version "2.9.1"
   resolved "https://registry.yarnpkg.com/@polkadot/util/-/util-2.9.1.tgz#841105eef98c9689cc369bc5eeb7a09a98ec14b2"
   integrity sha512-7E/bl9B8hNPb3gnuH8IDAqpsdQ6Z+Y8RgPIJNY9l20FJ1W1ST0UpZgB0BCurrL9kTf4TTg4Lt8iFVwcq8MHRjg==
@@ -173,6 +173,18 @@
     "@babel/runtime" "^7.9.2"
     "@types/bn.js" "^4.11.6"
     bn.js "^5.1.1"
+    camelcase "^5.3.1"
+    chalk "^4.0.0"
+    ip-regex "^4.1.0"
+
+"@polkadot/util@^2.12.1", "@polkadot/util@^2.9.1":
+  version "2.12.1"
+  resolved "https://registry.yarnpkg.com/@polkadot/util/-/util-2.12.1.tgz#d98e8df85a8958b7493fb110322184b7076b09e9"
+  integrity sha512-hJcwSWlZkiTMc+J/cxUine9SpH2kb0PSio4F6mFV06KmCEvVt8XV9pp2/FeIrU57i5Gp++Q5qoFAZBQS9MLz8w==
+  dependencies:
+    "@babel/runtime" "^7.9.6"
+    "@types/bn.js" "^4.11.6"
+    bn.js "^5.1.2"
     camelcase "^5.3.1"
     chalk "^4.0.0"
     ip-regex "^4.1.0"
@@ -632,10 +644,10 @@ bn.js@^4.4.0:
   resolved "https://registry.yarnpkg.com/bn.js/-/bn.js-4.11.8.tgz#2cde09eb5ee341f484746bb0309b3253b1b1442f"
   integrity sha512-ItfYfPLkWHUjckQCk8xC+LwxgK8NYcXywGigJgSwOP8Y2iyWT4f2vsZnoOXTTbo+o5yXmIUJ4gn5538SO5S3gA==
 
-bn.js@^5.1.1:
-  version "5.1.1"
-  resolved "https://registry.yarnpkg.com/bn.js/-/bn.js-5.1.1.tgz#48efc4031a9c4041b9c99c6941d903463ab62eb5"
-  integrity sha512-IUTD/REb78Z2eodka1QZyyEk66pciRcP6Sroka0aI3tG/iwIdYLrBD62RsubR7vqdt3WyX8p4jxeatzmRSphtA==
+bn.js@^5.1.1, bn.js@^5.1.2:
+  version "5.1.2"
+  resolved "https://registry.yarnpkg.com/bn.js/-/bn.js-5.1.2.tgz#c9686902d3c9a27729f43ab10f9d79c2004da7b0"
+  integrity sha512-40rZaf3bUNKTVYu9sIeeEGOg7g14Yvnj9kH7b50EiwX0Q7A6umbvfI5tvHaOERH0XigqKkfLkFQxzb4e6CIXnA==
 
 body-parser@1.19.0, body-parser@^1.19.0:
   version "1.19.0"
