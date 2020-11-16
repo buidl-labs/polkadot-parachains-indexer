@@ -31,10 +31,10 @@
     core-js-pure "^3.0.0"
     regenerator-runtime "^0.13.4"
 
-"@babel/runtime@^7.4.5", "@babel/runtime@^7.9.2", "@babel/runtime@^7.9.6":
-  version "7.9.6"
-  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.9.6.tgz#a9102eb5cadedf3f31d08a9ecf294af7827ea29f"
-  integrity sha512-64AF1xY3OAkFHqOb9s4jpgk1Mm5vDZ4L3acHvAml+53nO1XbXLuDodsVpO4OIUsmemlUHMxNdYMNJmsvOwLrvQ==
+"@babel/runtime@^7.12.5", "@babel/runtime@^7.4.5", "@babel/runtime@^7.9.2", "@babel/runtime@^7.9.6":
+  version "7.12.5"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.12.5.tgz#410e7e487441e1b360c29be715d870d9b985882e"
+  integrity sha512-plcc+hbExy3McchJCEQG3knOsuh3HH+Prx1P6cLIkET/0dLuQDEnrT+s27Axgc9bqfsmNUNHfscgMUdBpC9xfg==
   dependencies:
     regenerator-runtime "^0.13.4"
 
@@ -177,10 +177,37 @@
     chalk "^4.0.0"
     ip-regex "^4.1.0"
 
+"@polkadot/util@^4.1.1":
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/@polkadot/util/-/util-4.1.1.tgz#76668d5f0e00c396d6b6f4ba652348d287ad49c2"
+  integrity sha512-bmXMXq4WKKkowgzgRzCgkWNzu8tT/F4P+cBBlVReOH1UD1AmUG80coD/uIL+kUhLpQVN3xXtdXHIxFQcfK3qKA==
+  dependencies:
+    "@babel/runtime" "^7.12.5"
+    "@polkadot/x-textdecoder" "4.1.1"
+    "@polkadot/x-textencoder" "4.1.1"
+    "@types/bn.js" "^4.11.6"
+    bn.js "^5.1.3"
+    camelcase "^5.3.1"
+    ip-regex "^4.2.0"
+
 "@polkadot/wasm-crypto@^1.2.1":
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/@polkadot/wasm-crypto/-/wasm-crypto-1.2.1.tgz#2189702447acd28d763886359576c87562241767"
   integrity sha512-nckIoZBV4nBZdeKwFwH5t7skS7L7GO5EFUl5B1F6uCjUfdNpDz3DtqbYQHcLdCZNmG4TDLg6w/1J+rkl2SiUZw==
+
+"@polkadot/x-textdecoder@4.1.1":
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/@polkadot/x-textdecoder/-/x-textdecoder-4.1.1.tgz#9bdc94ca962b6f7d931c827e8316cd09fc751aff"
+  integrity sha512-I0u3ymy2wAoi3zaycmBu8HqGudp4nMGKqSGasSB1ko9SKtB++JsWKH99it721rpeSdFXJOpBERQjvapCQXK6sQ==
+  dependencies:
+    "@babel/runtime" "^7.12.5"
+
+"@polkadot/x-textencoder@4.1.1":
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/@polkadot/x-textencoder/-/x-textencoder-4.1.1.tgz#828e08895fbb7c29db7ce81d63e2d93ca7750660"
+  integrity sha512-yhDwo2Dy835+OYk5clNVJ0VGGtu6zC9Uw0tDp9BSDSVrb1gZGrhAEGTtvTG8JM4qPJ/XBTaaN9Ul2rnk0VIiOA==
+  dependencies:
+    "@babel/runtime" "^7.12.5"
 
 "@samverschueren/stream-to-observable@^0.3.0":
   version "0.3.0"
@@ -632,10 +659,10 @@ bn.js@^4.4.0:
   resolved "https://registry.yarnpkg.com/bn.js/-/bn.js-4.11.8.tgz#2cde09eb5ee341f484746bb0309b3253b1b1442f"
   integrity sha512-ItfYfPLkWHUjckQCk8xC+LwxgK8NYcXywGigJgSwOP8Y2iyWT4f2vsZnoOXTTbo+o5yXmIUJ4gn5538SO5S3gA==
 
-bn.js@^5.1.1:
-  version "5.1.1"
-  resolved "https://registry.yarnpkg.com/bn.js/-/bn.js-5.1.1.tgz#48efc4031a9c4041b9c99c6941d903463ab62eb5"
-  integrity sha512-IUTD/REb78Z2eodka1QZyyEk66pciRcP6Sroka0aI3tG/iwIdYLrBD62RsubR7vqdt3WyX8p4jxeatzmRSphtA==
+bn.js@^5.1.1, bn.js@^5.1.3:
+  version "5.1.3"
+  resolved "https://registry.yarnpkg.com/bn.js/-/bn.js-5.1.3.tgz#beca005408f642ebebea80b042b4d18d2ac0ee6b"
+  integrity sha512-GkTiFpjFtUzU9CbMeJ5iazkCzGL3jrhzerzZIuqLABjbwRaFt33I9tUdSNryIptM+RxDet6OKm2WnLXzW51KsQ==
 
 body-parser@1.19.0, body-parser@^1.19.0:
   version "1.19.0"
@@ -2239,10 +2266,10 @@ internal-slot@^1.0.2:
     has "^1.0.3"
     side-channel "^1.0.2"
 
-ip-regex@^4.1.0:
-  version "4.1.0"
-  resolved "https://registry.yarnpkg.com/ip-regex/-/ip-regex-4.1.0.tgz#5ad62f685a14edb421abebc2fff8db94df67b455"
-  integrity sha512-pKnZpbgCTfH/1NLIlOduP/V+WRXzC2MOz3Qo8xmxk8C5GudJLgK5QyLVXOSWy3ParAH7Eemurl3xjv/WXYFvMA==
+ip-regex@^4.1.0, ip-regex@^4.2.0:
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/ip-regex/-/ip-regex-4.2.0.tgz#a03f5eb661d9a154e3973a03de8b23dd0ad6892e"
+  integrity sha512-n5cDDeTWWRwK1EBoWwRti+8nP4NbytBBY0pldmnIkq6Z55KNFmWofh4rl9dPZpj+U/nVq7gweR3ylrvMt4YZ5A==
 
 ipaddr.js@1.9.1:
   version "1.9.1"
