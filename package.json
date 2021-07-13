@@ -44,7 +44,7 @@
     "eslint-plugin-react": "7.x",
     "eslint-plugin-react-hooks": "^4.0.0",
     "husky": "^4.2.5",
-    "lint-staged": "^10.2.2",
+    "lint-staged": "^11.0.1",
     "prettier": "^2.0.5",
     "pretty-quick": "^2.0.1",
     "shared-git-hooks": "^1.2.1"
