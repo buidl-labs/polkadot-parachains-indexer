@@ -14,7 +14,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@polkadot/api": "^1.13.1",
+    "@polkadot/api": "^5.1.1",
     "@polkadot/util": "^2.9.1",
     "@sentry/node": "^5.10.2",
     "body-parser": "^1.19.0",
